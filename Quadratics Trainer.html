@@ -1,0 +1,1685 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quadratics Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a graph-paper notebook. Sticky tab bar, one readable column, rule cards with highlighter marks, quiz card centred on the page. */
+:root {
+  --paper: #f4f6f9;
+  --sheet: #ffffff;
+  --ink: #17202d;
+  --ink-2: #4b5567;
+  --rule: #d6dde7;
+  --grid: #e7ecf3;
+  --accent: #2350c8;
+  --accent-soft: #e5ecfb;
+  --on-accent: #ffffff;
+  --marker: rgba(255, 214, 64, .55);
+  --good: #1d7f47;
+  --good-soft: #e3f3e9;
+  --bad: #b83636;
+  --bad-soft: #f8e6e6;
+  --warn: #9a6512;
+  --curve: #2350c8;
+  --line2: #c2410c;
+  --f-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --f-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --f-math: "STIX Two Math", "Cambria Math", "Latin Modern Math", "Iowan Old Style", Palatino, Georgia, serif;
+  --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --r: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f141b; --sheet: #161d27; --ink: #e4e9f0; --ink-2: #9ba7b9; --rule: #2a3442; --grid: #1c2531;
+    --accent: #84a6ff; --accent-soft: #1d2a47; --on-accent: #0f141b; --marker: rgba(233, 196, 80, .3);
+    --good: #5cc98a; --good-soft: #15291f; --bad: #f07b7b; --bad-soft: #2d1a1c; --warn: #e0a84a;
+    --curve: #84a6ff; --line2: #fb923c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f141b; --sheet: #161d27; --ink: #e4e9f0; --ink-2: #9ba7b9; --rule: #2a3442; --grid: #1c2531;
+  --accent: #84a6ff; --accent-soft: #1d2a47; --on-accent: #0f141b; --marker: rgba(233, 196, 80, .3);
+  --good: #5cc98a; --good-soft: #15291f; --bad: #f07b7b; --bad-soft: #2d1a1c; --warn: #e0a84a;
+  --curve: #84a6ff; --line2: #fb923c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--paper); color: var(--ink); font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+[hidden] { display: none !important; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 2px; }
+mark { background: linear-gradient(transparent 35%, var(--marker) 35%, var(--marker) 92%, transparent 92%); color: inherit; padding: 0 .1em; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.2; }
+h2 { font-size: 1.55rem; margin: 0 0 .6rem; font-weight: 600; }
+h3 { font-size: 1.15rem; margin: 1.4rem 0 .4rem; font-weight: 600; }
+p { margin: .5rem 0; max-width: 68ch; }
+.wrap { max-width: 940px; margin: 0 auto; }
+
+/* Top bar */
+header.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper);
+  border-bottom: 1px solid var(--rule); margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))) 0;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+}
+.bar-inner { max-width: 940px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.brand { cursor: pointer; display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-size: 1.2rem; font-weight: 600; white-space: nowrap; }
+.brand svg { flex: none; }
+nav.tabs { display: flex; gap: 2px; background: var(--grid); border-radius: 999px; padding: 3px; flex-wrap: wrap; }
+nav.tabs button { border: 0; background: transparent; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: var(--ink-2); font-weight: 550; }
+nav.tabs button[aria-selected="true"] { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.bar-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: .9rem; color: var(--ink-2); user-select: none; }
+.switch input { appearance: none; width: 34px; height: 20px; border-radius: 999px; background: var(--rule); position: relative; cursor: pointer; margin: 0; transition: background .15s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--sheet); transition: transform .15s; }
+.switch input:checked { background: var(--accent); }
+.switch input:checked::after { transform: translateX(14px); }
+.iconbtn { border: 1px solid var(--rule); background: var(--sheet); border-radius: 8px; padding: 4px 9px; cursor: pointer; font-size: .85rem; color: var(--ink-2); }
+
+main { padding-top: 22px; }
+.view-intro { color: var(--ink-2); margin-bottom: 18px; }
+
+/* Generic blocks */
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 18px 20px; }
+.remember { background: var(--sheet); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: var(--r); padding: 14px 18px; margin: 12px 0; }
+.remember h4 { margin: 0 0 6px; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-family: var(--f-body); }
+.remember ul, .remember ol { margin: 0; padding-left: 1.2em; }
+.remember li { margin: 3px 0; }
+.extra-tag { display: inline-block; font-size: .68rem; text-transform: uppercase; letter-spacing: .07em; font-weight: 700; color: var(--warn); border: 1px solid currentColor; border-radius: 4px; padding: 0 5px; vertical-align: middle; margin-left: 6px; font-family: var(--f-body); }
+.lvl { display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 700; border-radius: 4px; padding: 1px 6px; letter-spacing: .03em; background: var(--grid); color: var(--ink-2); white-space: nowrap; }
+.lvl.l1 { color: var(--good); } .lvl.l2 { color: var(--accent); } .lvl.l3 { color: var(--warn); }
+details.why { margin: 8px 0; border: 1px dashed var(--rule); border-radius: 8px; padding: 6px 12px; background: var(--sheet); }
+details.why summary { cursor: pointer; color: var(--accent); font-weight: 550; font-size: .92rem; }
+details.why[open] summary { margin-bottom: 4px; }
+.tbl-wrap { overflow-x: auto; margin: 10px 0; }
+table { border-collapse: collapse; font-size: .93rem; min-width: 100%; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 650; }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.small { padding: 4px 10px; font-size: .85rem; }
+.btn.danger { background: transparent; color: var(--bad); border-color: var(--bad); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.muted { color: var(--ink-2); }
+.small { font-size: .86rem; }
+
+/* Math */
+.m { font-family: var(--f-math); font-size: 1.07em; }
+.m i, i.v { font-style: italic; }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .92em; line-height: 1.15; margin: 0 .12em; }
+.frac > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 .25em .05em; }
+.frac > span:last-child { padding: .05em .25em 0; }
+.rad { border-top: 1.4px solid currentColor; padding: 0 .12em; margin-left: .04em; }
+.eq { font-family: var(--f-math); font-size: 1.35rem; line-height: 1.6; }
+.tex .katex { font-size: 1.08em; }
+.eq.tex .katex { font-size: 1em; }
+.choice .tex .katex-display, .tex .katex-display { margin: 0; }
+
+/* Start */
+.hero { padding: 10px 0 8px; }
+.hero h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 0 0 .5rem; font-weight: 600; }
+.lede { font-size: 1.1rem; color: var(--ink-2); margin-bottom: 1rem; }
+.flow { list-style: none; counter-reset: step; padding: 0; margin: 8px 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.flow li { counter-increment: step; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 4px; align-content: start; font-size: .92rem; color: var(--ink-2); }
+.flow b { color: var(--accent); font-size: 1.02rem; cursor: pointer; font-family: var(--f-display); }
+.flow b::before { content: counter(step) ". "; color: var(--ink-2); }
+.flow b:hover { text-decoration: underline; }
+.duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.duo h3 { margin-top: 0; }
+.levels { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 6px 0; font-size: .93rem; }
+.levels dt { font-weight: 600; white-space: nowrap; }
+.levels dd { margin: 0; color: var(--ink-2); }
+.opts { padding-left: 1.2em; max-width: 72ch; }
+.opts li { margin: 4px 0; }
+
+/* Learn */
+.toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 20px; }
+.toc a { text-decoration: none; font-size: .85rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); }
+.toc a:hover { color: var(--accent); border-color: var(--accent); }
+section.lesson { padding: 22px 0 18px; border-top: 1px solid var(--rule); }
+section.lesson:first-of-type { border-top: 0; padding-top: 0; }
+.lesson-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 12px; justify-content: space-between; }
+.lesson-head h2 { margin: 0; }
+.cases { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 12px 0; }
+.case { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+.case h4 { margin: 0 0 4px; font-family: var(--f-display); font-size: 1.05rem; }
+.case ul { margin: 6px 0 0; padding-left: 1.1em; font-size: .92rem; }
+.graph svg { width: 100%; height: auto; display: block; }
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 12px 0; }
+.ex { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 12px 16px; min-width: 0; }
+.ex h4 { margin: 0 0 6px; font-size: .95rem; }
+.ex ol { margin: 0; padding-left: 1.2em; }
+.ex li { margin: 2px 0; }
+
+/* Explorer */
+.explorer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 720px) { .explorer { grid-template-columns: 1fr; } }
+.sliders { display: grid; gap: 8px; margin: 10px 0; }
+.sl { display: grid; grid-template-columns: 22px 1fr 34px; align-items: center; gap: 10px; }
+.sl label { font-family: var(--f-math); font-style: italic; font-size: 1.15rem; }
+.sl output { font-family: var(--f-mono); text-align: right; font-variant-numeric: tabular-nums; }
+.sl input { width: 100%; accent-color: var(--accent); }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: .95rem; margin-top: 10px; }
+.facts dt { color: var(--ink-2); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
+.facts dd { margin: 0; min-width: 0; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: .82rem; font-weight: 650; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.mid { background: var(--accent-soft); color: var(--accent); }
+
+/* Cheat sheet */
+.cheat { columns: 2 300px; column-gap: 16px; }
+.cheat .card { break-inside: avoid; margin-bottom: 16px; padding: 14px 16px; }
+.cheat h3 { margin: 0 0 6px; font-size: 1.02rem; }
+.cheat ul { margin: 0; padding-left: 1.1em; }
+.cheat li { margin: 3px 0; }
+
+/* Quiz */
+.setup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.opt-group { display: grid; gap: 6px; }
+.opt-group h4 { margin: 0 0 2px; font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); }
+.check { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; background: var(--sheet); }
+.check input { accent-color: var(--accent); margin: 0; }
+.check .grow { flex: 1; min-width: 0; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--sheet); padding: 6px 14px; cursor: pointer; color: var(--ink-2); border-right: 1px solid var(--rule); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.qwrap { max-width: 720px; margin: 0 auto; }
+.qmeta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: .88rem; color: var(--ink-2); }
+.progress { height: 5px; background: var(--grid); border-radius: 999px; overflow: hidden; margin-bottom: 14px; }
+.progress span { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+.qcard { background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; padding: 22px; }
+.skillchip { display: inline-flex; gap: 6px; align-items: center; font-size: .82rem; color: var(--ink-2); }
+.prompt { font-size: 1.12rem; margin: 10px 0 14px; line-height: 1.6; }
+.prompt .m { font-size: 1.18em; }
+.qgraph { max-width: 380px; margin: 0 auto 12px; }
+.choices { display: grid; gap: 8px; }
+.choice { text-align: left; border: 1.5px solid var(--rule); background: var(--sheet); border-radius: 10px; padding: 10px 14px; cursor: pointer; display: flex; gap: 12px; align-items: center; line-height: 1.5; }
+.choice:hover:not(:disabled) { border-color: var(--accent); }
+.choice .key { flex: none; width: 24px; height: 24px; border-radius: 6px; background: var(--grid); display: inline-flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; color: var(--ink-2); font-family: var(--f-mono); }
+.choice.right { border-color: var(--good); background: var(--good-soft); }
+.choice.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.choice:disabled { cursor: default; }
+.answer-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.answer-row input { flex: 1 1 200px; min-width: 0; padding: 9px 12px; border: 1.5px solid var(--rule); border-radius: 8px; background: var(--paper); font-family: var(--f-mono); font-size: 1rem; }
+.answer-row input:focus { border-color: var(--accent); outline: none; }
+.input-hint { font-size: .82rem; color: var(--ink-2); margin-top: 6px; }
+.feedback { margin-top: 16px; border-radius: 10px; padding: 14px 16px; border-left: 4px solid; }
+.feedback.ok { background: var(--good-soft); border-color: var(--good); }
+.feedback.no { background: var(--bad-soft); border-color: var(--bad); }
+.feedback h4 { margin: 0 0 4px; font-size: 1rem; }
+.feedback.ok h4 { color: var(--good); } .feedback.no h4 { color: var(--bad); }
+.feedback .trap { font-weight: 550; }
+.steps { margin: 8px 0 0; padding-left: 1.3em; }
+.steps li { margin: 3px 0; }
+.rulebox { margin-top: 10px; font-size: .92rem; padding-top: 8px; border-top: 1px dashed var(--rule); }
+.hintbox { margin-top: 10px; font-size: .92rem; background: var(--accent-soft); border-radius: 8px; padding: 8px 12px; }
+.qactions { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+.kbd { font-family: var(--f-mono); font-size: .75rem; border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; }
+
+/* Progress */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat { background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--r); padding: 12px 14px; }
+.stat b { display: block; font-size: 1.5rem; font-family: var(--f-display); font-variant-numeric: tabular-nums; }
+.stat span { font-size: .8rem; color: var(--ink-2); text-transform: uppercase; letter-spacing: .06em; }
+.bar { height: 7px; border-radius: 999px; background: var(--grid); overflow: hidden; min-width: 70px; }
+.bar span { display: block; height: 100%; }
+.dots { display: inline-flex; gap: 3px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--grid); display: inline-block; }
+.dots i.y { background: var(--good); } .dots i.n { background: var(--bad); }
+.mstate { font-size: .8rem; font-weight: 650; white-space: nowrap; }
+.mstate.new { color: var(--ink-2); } .mstate.learning { color: var(--bad); } .mstate.getting { color: var(--warn); } .mstate.strong { color: var(--accent); } .mstate.mastered { color: var(--good); }
+td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.topic-row td { background: var(--grid); font-weight: 650; font-family: var(--f-display); font-size: 1rem; }
+.mist { display: grid; gap: 8px; }
+.mist .card { padding: 10px 14px; }
+textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); padding: 8px; font-family: var(--f-mono); font-size: .8rem; }
+.notice { font-size: .88rem; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); margin-top: 8px; }
+.notice.err { background: var(--bad-soft); color: var(--bad); }
+.confirm { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 560px) {
+  header.topbar { position: static; }
+  .bar-tools { margin-left: 0; }
+  .qcard { padding: 16px; }
+  h2 { font-size: 1.35rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="bar-inner">
+    <div class="brand" data-go="start" title="Start page">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 22 L23 22" stroke="currentColor" stroke-width="1.5" opacity=".45"/><path d="M4 3 Q13 36 22 3" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"/><circle cx="8.4" cy="15.6" r="2" fill="var(--accent)"/><circle cx="17.6" cy="15.6" r="2" fill="var(--accent)"/></svg>
+      Quadratics Trainer
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" data-view="start" id="tab-start">Start</button>
+      <button role="tab" data-view="learn" id="tab-learn">Learn</button>
+      <button role="tab" data-view="cheat" id="tab-cheat">Cheat sheet</button>
+      <button role="tab" data-view="quiz" id="tab-quiz">Quiz</button>
+      <button role="tab" data-view="progress" id="tab-progress">Progress</button>
+    </nav>
+    <div class="bar-tools">
+      <label class="switch" title="Draw formulas with proper math typesetting (KaTeX, needs internet; falls back to the built-in look offline)"><input type="checkbox" id="typesetToggle"> Typeset math <span class="small" id="typesetMsg"></span></label>
+      <label class="switch" title="Show topics beyond your notes that often appear on the SAT"><input type="checkbox" id="extrasToggle"> SAT extras</label>
+      <button class="iconbtn" id="themeBtn" title="Switch between light and dark">☾ Dark mode</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ START ============ -->
+<div id="view-start" data-viewpanel hidden>
+  <div class="hero">
+    <h1>Get quadratics down cold.</h1>
+    <p class="lede">A study kit for <span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = 0</span>: what the parabola looks like, how many roots it has, and how to find them, up to SAT level. Learn the rules, then drill them until they stick.</p>
+    <div class="row"><button class="btn" data-go="learn">Start learning</button><button class="btn ghost" data-go="quiz">Jump to a quiz</button></div>
+  </div>
+
+  <h3>How to use it</h3>
+  <ol class="flow">
+    <li><b data-go="learn">Learn</b><span>Read each section. It opens with the rule to memorize; <i>Show me why</i> has the reasoning, and the explorer lets you drag <i>a</i>, <i>b</i>, <i>c</i> to see the parabola move.</span></li>
+    <li><b data-go="cheat">Cheat sheet</b><span>Every rule on one page. Read it, cover it, say it back.</span></li>
+    <li><b data-go="quiz">Quiz</b><span>Practise. Every question is generated fresh, so you can't memorize answers. Wrong answers show the worked steps and the rule.</span></li>
+    <li><b data-go="progress">Progress</b><span>See which skills are mastered and which need work, plus your recent mistakes.</span></li>
+  </ol>
+
+  <div class="duo">
+    <div class="card">
+      <h3>Learn vs. quiz</h3>
+      <p><b>Learn</b> is for understanding: read at your own pace, nothing is scored.</p>
+      <p><b>Quiz</b> is for remembering: answer, get instant feedback, and every answer counts toward mastery. Each Learn section has a <i>Quiz me on this</i> button to practise just that topic.</p>
+    </div>
+    <div class="card">
+      <h3>Difficulty levels</h3>
+      <dl class="levels">
+        <dt><span class="lvl l1">L1</span> Foundation</dt><dd>The core rules: which way it opens, the discriminant, factoring when <span class="m"><i>a</i> = 1</span>.</dd>
+        <dt><span class="lvl l2">L2</span> Core</dt><dd>Typical test questions: <span class="m"><i>a</i> &gt; 1</span>, negative <i>a</i>, GCF, min/max values.</dd>
+        <dt><span class="lvl l3">L3</span> Stretch</dt><dd>SAT-hard: the quadratic formula, choosing a method, unknown <i>k</i>.</dd>
+      </dl>
+      <p class="small muted">Pick any mix of levels on the Quiz tab.</p>
+    </div>
+  </div>
+
+  <h3>Quiz options</h3>
+  <ul class="opts">
+    <li><b>Weak spots first</b> serves the skills you miss most more often.</li>
+    <li><b>Drill my 3 weakest</b> runs a quick quiz on just your three worst skills.</li>
+    <li><b>Length</b>: 5, 10, 20 questions, or Endless.</li>
+    <li><b>SAT extras</b> (switch at the top) adds topics beyond your class notes that often show up on the SAT: difference of squares, sum and product of roots, vertex form, parabola meets a line.</li>
+    <li><b>Mastered</b> means at least 5 tries, 4 of the last 5 right, and the most recent one right.</li>
+  </ul>
+  <p class="small muted">Progress is saved in this browser only. Back it up from the Progress tab.</p>
+</div>
+
+<!-- ============ LEARN ============ -->
+<div id="view-learn" data-viewpanel hidden>
+  <p class="view-intro">Each section opens with the rule to memorize. Open <b>Show me why</b> for the reasoning. Use <b>Quiz me</b> to practise that section.</p>
+  <div class="toc" id="toc"></div>
+
+  <section class="lesson" id="l-big" data-toc="Big picture">
+    <div class="lesson-head"><h2>The big picture</h2></div>
+    <div class="remember"><h4>Remember this</h4>
+      <ul>
+        <li><span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = 0</span> draws a <mark>parabola</mark>. Its <mark>roots</mark> are where it hits the x-axis.</li>
+        <li>Count the roots with <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span>: <b>positive → 2 · zero → 1 · negative → 0</b>.</li>
+        <li>Picture it: is the vertex <b>below, on, or above</b> the axis?</li>
+        <li>Find the roots by <b>factoring</b> if the numbers are nice; otherwise use <span class="m"><i>x</i> = <span class="frac"><span>−<i>b</i> ± √<span class="rad"><i>b</i><sup>2</sup> − 4<i>ac</i></span></span><span>2<i>a</i></span></span></span>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="lesson" id="l-what" data-toc="Parabola basics" data-topic="graph">
+    <div class="lesson-head"><h2>What a quadratic is</h2><button class="btn ghost small" data-quiz-topic="graph">Quiz me on this</button></div>
+    <p>A second-degree polynomial <span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = 0</span>, where <i>a</i>, <i>b</i>, <i>c</i> are constants and <span class="m"><i>a</i> ≠ 0</span>.</p>
+    <div class="remember"><h4>Rules</h4>
+      <ul>
+        <li>Opens <b>up ∪</b> when <span class="m"><i>a</i> &gt; 0</span>, <b>down ∩</b> when <span class="m"><i>a</i> &lt; 0</span>. <i>a</i> is the number in front of <span class="m"><i>x</i><sup>2</sup></span>, wherever that term is written.</li>
+        <li>The turning point is the <mark>vertex</mark>, at <span class="m"><i>x</i> = <span class="frac"><span>−<i>b</i></span><span>2<i>a</i></span></span></span>. Plug that x back in to get the vertex's y.</li>
+        <li>Opens up → the vertex y is the <b>minimum</b> value. Opens down → it's the <b>maximum</b>.</li>
+        <li>Solving <span class="m">… = 0</span> asks “where is <span class="m"><i>y</i> = 0</span>?”, which is where the curve meets the x-axis.</li>
+      </ul>
+    </div>
+    <details class="why"><summary>Show me why</summary>
+      <p>When <i>x</i> gets large, the <span class="m"><i>ax</i><sup>2</sup></span> term dominates. If <i>a</i> is positive, both arms end up high (∪); if negative, both arms end up low (∩).</p>
+      <p>A parabola is symmetric. Its two roots (when it has them) sit the same distance either side of the vertex, so the vertex x is their average: <span class="m"><span class="frac"><span><i>r</i><sub>1</sub> + <i>r</i><sub>2</sub></span><span>2</span></span> = <span class="frac"><span>−<i>b</i></span><span>2<i>a</i></span></span></span>.</p>
+    </details>
+  </section>
+
+  <section class="lesson" id="l-disc" data-toc="Discriminant" data-topic="disc">
+    <div class="lesson-head"><h2>Why <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span> decides</h2><button class="btn ghost small" data-quiz-topic="disc">Quiz me on this</button></div>
+    <p>It's the part under the square root in the quadratic formula, called the <mark>discriminant</mark>.</p>
+    <div class="tbl-wrap"><table>
+      <tr><th><span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span></th><th>What <span class="m">±√</span> does</th><th>Roots</th><th>Graph</th></tr>
+      <tr><td>positive</td><td>two different answers</td><td><b>2</b></td><td>crosses the axis twice</td></tr>
+      <tr><td>zero</td><td><span class="m">±√0</span> changes nothing</td><td><b>1</b> (double)</td><td>touches at the vertex</td></tr>
+      <tr><td>negative</td><td>no real square root of a negative</td><td><b>0</b> real</td><td>never reaches the axis</td></tr>
+    </table></div>
+    <h3>The 3 cases</h3>
+    <p>All three use <span class="m"><i>y</i> = <i>x</i><sup>2</sup> − 2<i>x</i> + <i>c</i></span>. Only <i>c</i> changes, which slides the same curve up.</p>
+    <div class="cases">
+      <div class="case"><h4>2 roots: <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> − 3 = 0</span></h4><div class="graph" data-graph="1,-2,-3"></div>
+        <ul><li>Discriminant <span class="m">(−2)<sup>2</sup> − 4(1)(−3) = 16</span> → positive</li><li>Factor: multiply to −3, add to −2 → −3 and 1 → <span class="m">(<i>x</i> − 3)(<i>x</i> + 1)</span></li><li>Roots <span class="m"><i>x</i> = 3, <i>x</i> = −1</span></li><li>Vertex at y = −4, below the axis, arms go up → must cross twice.</li></ul></div>
+      <div class="case"><h4>1 root: <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> + 1 = 0</span></h4><div class="graph" data-graph="1,-2,1"></div>
+        <ul><li>Discriminant <span class="m">4 − 4 = 0</span></li><li>Perfect square → <span class="m">(<i>x</i> − 1)<sup>2</sup></span></li><li>Root <span class="m"><i>x</i> = 1</span>, a <b>double root</b></li><li>Vertex sits on the axis; the curve touches and turns back.</li></ul></div>
+      <div class="case"><h4>0 roots: <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> + 2 = 0</span></h4><div class="graph" data-graph="1,-2,2"></div>
+        <ul><li>Discriminant <span class="m">4 − 8 = −4</span> → negative</li><li>No pair multiplies to 2 and adds to −2</li><li>Lowest point is y = 1, already above the axis.</li><li><i>Later in math:</i> two complex roots, <span class="m">1 ± <i>i</i></span>.</li></ul></div>
+    </div>
+    <div class="remember"><h4>Shortcuts &amp; special cases</h4>
+      <ul>
+        <li><b>Opposite signs shortcut:</b> if <i>a</i> and <i>c</i> have opposite signs, there are <b>always 2 roots</b>.</li>
+        <li><b>Perfect-square test:</b> if <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span> is a perfect square (0, 1, 4, 9, 16…), it factors with whole numbers. If not, go straight to the formula.</li>
+        <li><b>Downward parabolas (<span class="m"><i>a</i> &lt; 0</span>):</b> the vertex is the <i>highest</i> point. Vertex above the axis → 2 roots, on → 1, below → 0. The discriminant rule is unchanged.</li>
+      </ul>
+    </div>
+    <details class="why"><summary>Show me why the opposite-signs shortcut works</summary>
+      <p>If <i>a</i> and <i>c</i> have opposite signs, <span class="m"><i>ac</i></span> is negative, so <span class="m">−4<i>ac</i></span> is positive. <span class="m"><i>b</i><sup>2</sup></span> is never negative. Positive plus non-negative is positive, so the discriminant is positive → 2 roots.</p>
+      <p>Graph version: with <span class="m"><i>a</i> &gt; 0</span> and <span class="m"><i>c</i> &lt; 0</span>, the curve opens up but passes through <span class="m">(0, <i>c</i>)</span>, which is below the axis. A ∪ that dips below the axis has to cross it twice.</p>
+      <p>Same signs tell you nothing by themselves: you have to compare <span class="m"><i>b</i><sup>2</sup></span> with <span class="m">4<i>ac</i></span>.</p>
+    </details>
+  </section>
+
+  <section class="lesson" id="l-explore" data-toc="Explorer">
+    <div class="lesson-head"><h2>Parabola explorer</h2></div>
+    <p class="muted">Drag the sliders and watch the root count change. Try to predict the discriminant before you look.</p>
+    <div class="explorer">
+      <div class="card graph" id="exGraph"></div>
+      <div>
+        <div class="eq" id="exEq"></div>
+        <div class="sliders">
+          <div class="sl"><label for="sa">a</label><input type="range" id="sa" min="-4" max="4" step="1" value="1"><output id="oa">1</output></div>
+          <div class="sl"><label for="sb">b</label><input type="range" id="sb" min="-10" max="10" step="1" value="-2"><output id="ob">-2</output></div>
+          <div class="sl"><label for="sc">c</label><input type="range" id="sc" min="-12" max="12" step="1" value="-3"><output id="oc">-3</output></div>
+        </div>
+        <div class="row">
+          <button class="btn ghost small" data-preset="1,-2,-3">2 roots</button>
+          <button class="btn ghost small" data-preset="1,-2,1">1 root</button>
+          <button class="btn ghost small" data-preset="1,-2,2">0 roots</button>
+          <button class="btn ghost small" data-preset="2,7,3">a &gt; 1</button>
+          <button class="btn ghost small" data-preset="-1,1,6">a &lt; 0</button>
+          <button class="btn ghost small" id="exRandom">Random</button>
+        </div>
+        <dl class="facts" id="exFacts"></dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="lesson" id="l-factor" data-toc="Factoring" data-topic="factor">
+    <div class="lesson-head"><h2>Factoring</h2><button class="btn ghost small" data-quiz-topic="factor">Quiz me on this</button></div>
+    <div class="remember"><h4>Remember this: only 3 things</h4>
+      <ol>
+        <li><b>Why it works:</b> if <span class="m"><i>A</i> · <i>B</i> = 0</span>, then <span class="m"><i>A</i> = 0</span> or <span class="m"><i>B</i> = 0</span>. Turn the equation into two brackets and solve each one.</li>
+        <li><b>The one rule:</b> find two numbers that <mark>multiply to <span class="m"><i>a</i> · <i>c</i></span></mark> and <mark>add to <i>b</i></mark>.</li>
+        <li><b>Signs:</b> <i>c</i> positive → both numbers take <i>b</i>'s sign. <i>c</i> negative → opposite signs; the bigger one takes <i>b</i>'s sign.</li>
+      </ol>
+      <p class="small muted" style="margin:.5rem 0 0">Everything else is this rule in disguise. When <span class="m"><i>a</i> = 1</span>, <span class="m"><i>a</i> · <i>c</i></span> is just <i>c</i>. A perfect square is a pair that's the same number twice.</p>
+    </div>
+    <h3>Steps</h3>
+    <ol>
+      <li><b>Standard form:</b> everything on one side, <span class="m">= 0</span>.</li>
+      <li><b>Clean up:</b> if <i>a</i> is negative, factor out −1; if every term shares a factor (GCF), factor it out. <mark>These pulled-out numbers never give a root.</mark></li>
+      <li><b>Find the pair:</b> multiply to <span class="m"><i>a</i> · <i>c</i></span>, add to <i>b</i>.</li>
+      <li><b>Build the brackets:</b> <span class="m"><i>a</i> = 1</span> → write <span class="m">(<i>x</i> + <i>m</i>)(<i>x</i> + <i>n</i>)</span> directly. <span class="m"><i>a</i> &gt; 1</span> → split the middle term with the pair, group into two halves, factor each, pull out the matching bracket.</li>
+      <li><b>Solve:</b> set each bracket to 0. With <span class="m">(<i>x</i> + <i>m</i>)</span>, the answer is <span class="m"><i>x</i> = −<i>m</i></span>: <mark>the sign flips</mark>.</li>
+      <li><b>Check:</b> plug each answer into the original; it should give 0.</li>
+    </ol>
+    <div class="tbl-wrap"><table>
+      <tr><th><i>c</i></th><th><i>b</i></th><th>The pair is…</th><th>Example</th></tr>
+      <tr><td>+</td><td>+</td><td>both +</td><td class="m"><i>x</i><sup>2</sup> + 5<i>x</i> + 6 = (<i>x</i> + 2)(<i>x</i> + 3)</td></tr>
+      <tr><td>+</td><td>−</td><td>both −</td><td class="m"><i>x</i><sup>2</sup> − 5<i>x</i> + 6 = (<i>x</i> − 2)(<i>x</i> − 3)</td></tr>
+      <tr><td>−</td><td>either</td><td>opposite signs; bigger takes <i>b</i>'s sign</td><td class="m"><i>x</i><sup>2</sup> − 3<i>x</i> − 10 = (<i>x</i> − 5)(<i>x</i> + 2)</td></tr>
+    </table></div>
+    <div class="ex-grid">
+      <div class="ex"><h4><span class="m"><i>a</i> = 1</span>: <span class="m"><i>x</i><sup>2</sup> − 3<i>x</i> − 10 = 0</span></h4><ol>
+        <li>Multiply to −10, add to −3: try (1, −10) → −9 · (−1, 10) → 9 · (2, −5) → −3 ✓</li>
+        <li><span class="m">(<i>x</i> + 2)(<i>x</i> − 5) = 0</span></li><li><span class="m"><i>x</i> = −2</span> or <span class="m"><i>x</i> = 5</span></li><li>Check: 25 − 15 − 10 = 0 ✓</li></ol></div>
+      <div class="ex"><h4><span class="m"><i>a</i> &gt; 1</span>: <span class="m">2<i>x</i><sup>2</sup> + 7<i>x</i> + 3 = 0</span></h4><ol>
+        <li><span class="m"><i>a</i> · <i>c</i> = 6</span>, add to 7 → 6 and 1</li><li>Split: <span class="m">2<i>x</i><sup>2</sup> + 6<i>x</i> + <i>x</i> + 3</span></li>
+        <li>Group: <span class="m">2<i>x</i>(<i>x</i> + 3) + 1(<i>x</i> + 3)</span></li><li><span class="m">(2<i>x</i> + 1)(<i>x</i> + 3) = 0</span> → <span class="m"><i>x</i> = −<span class="frac"><span>1</span><span>2</span></span></span> or <span class="m">−3</span></li></ol>
+        <p class="small muted">If the brackets after grouping don't match, re-check the pair and its signs. If the second half starts with a minus, factor out a negative so they line up.</p></div>
+      <div class="ex"><h4>Common factor: <span class="m">2<i>x</i><sup>2</sup> + 4<i>x</i> − 6 = 0</span></h4><ol>
+        <li>Take out 2 → <span class="m">2(<i>x</i><sup>2</sup> + 2<i>x</i> − 3) = 0</span></li><li>Multiply to −3, add to 2 → 3 and −1</li><li><span class="m">2(<i>x</i> + 3)(<i>x</i> − 1) = 0</span> → <span class="m"><i>x</i> = −3</span> or <span class="m">1</span>. The 2 is never zero, so it's not a root.</li></ol></div>
+      <div class="ex"><h4>Negative <i>a</i>: <span class="m">−<i>x</i><sup>2</sup> + <i>x</i> + 6 = 0</span></h4><ol>
+        <li>Take out −1 → <span class="m">−(<i>x</i><sup>2</sup> − <i>x</i> − 6) = 0</span></li><li>Multiply to −6, add to −1 → −3 and 2</li><li><span class="m">−(<i>x</i> − 3)(<i>x</i> + 2) = 0</span> → <span class="m"><i>x</i> = 3</span> or <span class="m">−2</span></li></ol></div>
+    </div>
+    <h3>Perfect square trinomial (1 repeated root)</h3>
+    <p>The pair is the same number twice. <span class="m"><i>x</i><sup>2</sup> + 2<i>x</i> + 1</span>: multiply to 1, add to 2 → 1 and 1 → <span class="m">(<i>x</i> + 1)<sup>2</sup></span>.</p>
+    <div class="remember"><h4>How to spot one</h4>
+      <ul><li>First and last terms are perfect squares, and the middle term is <b>2 × their square roots</b>.</li>
+      <li><span class="m"><i>x</i><sup>2</sup> − 6<i>x</i> + 9</span>: <span class="m">2 · <i>x</i> · 3 = 6<i>x</i></span> ✓ → <span class="m">(<i>x</i> − 3)<sup>2</sup></span>, double root <span class="m"><i>x</i> = 3</span>.</li>
+      <li>The last term must be <b>positive</b>. <span class="m"><i>x</i><sup>2</sup> + 6<i>x</i> − 9</span> is not a perfect square.</li></ul>
+    </div>
+    <details class="why"><summary>Show me why a double root only touches the axis</summary>
+      <p><span class="m">(<i>x</i> + 1)<sup>2</sup></span> is a square, so it's never negative. It equals 0 only at <span class="m"><i>x</i> = −1</span>. Everywhere else the curve is above the axis, so at that one point it touches (is tangent) instead of crossing. That point is the vertex.</p>
+    </details>
+  </section>
+
+  <section class="lesson" id="l-formula" data-toc="Formula" data-topic="formula">
+    <div class="lesson-head"><h2>When factoring doesn't work</h2><button class="btn ghost small" data-quiz-topic="formula">Quiz me on this</button></div>
+    <div class="tbl-wrap"><table>
+      <tr><th>Method</th><th>Use when</th></tr>
+      <tr><td>Factoring</td><td>The numbers are small and nice (discriminant is a perfect square). Fastest when it works.</td></tr>
+      <tr><td>Quadratic formula</td><td>Always works. Use it when factoring gets stuck.</td></tr>
+    </table></div>
+    <div class="remember"><h4>The formula</h4>
+      <p class="eq" style="margin:.2rem 0"><i>x</i> = <span class="frac"><span>−<i>b</i> ± √<span class="rad"><i>b</i><sup>2</sup> − 4<i>ac</i></span></span><span>2<i>a</i></span></span></p>
+      <ul><li>The <b>−b</b> means “flip the sign of b”. If <span class="m"><i>b</i> = −6</span>, then <span class="m">−<i>b</i> = 6</span>.</li>
+      <li>Square negatives with brackets: <span class="m">(−6)<sup>2</sup> = +36</span>.</li>
+      <li>Divide the <b>whole</b> top by <span class="m">2<i>a</i></span>, not just the square root.</li>
+      <li>Simplify the root: <span class="m">√<span class="rad">48</span> = √<span class="rad">16 · 3</span> = 4√<span class="rad">3</span></span>, then cancel any common factor.</li></ul>
+    </div>
+    <h3>Other heights</h3>
+    <p>To find where the curve crosses <span class="m"><i>y</i> = <i>k</i></span>, solve <span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = <i>k</i></span>. Move <i>k</i> to the left first so it's <span class="m">= 0</span>, then solve as usual.</p>
+    <div class="ex"><h4>Example: where does <span class="m"><i>y</i> = <i>x</i><sup>2</sup> − 2<i>x</i> − 3</span> meet <span class="m"><i>y</i> = 5</span>?</h4><ol>
+      <li><span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> − 3 = 5</span> → <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> − 8 = 0</span></li>
+      <li><span class="m">(<i>x</i> − 4)(<i>x</i> + 2) = 0</span> → <span class="m"><i>x</i> = 4</span> or <span class="m">−2</span></li></ol></div>
+  </section>
+
+  <section class="lesson" id="l-sat" data-toc="SAT extras" data-topic="sat" data-extra>
+    <div class="lesson-head"><h2>SAT extras <span class="extra-tag">Beyond your notes</span></h2><button class="btn ghost small" data-quiz-topic="sat">Quiz me on this</button></div>
+    <p class="muted">These show up often on the SAT and in Algebra 2. They're not in your vault notes yet.</p>
+    <div class="ex-grid">
+      <div class="ex"><h4>Difference of squares <span class="lvl l1">L1</span></h4>
+        <p><span class="m"><i>A</i><sup>2</sup> − <i>B</i><sup>2</sup> = (<i>A</i> − <i>B</i>)(<i>A</i> + <i>B</i>)</span>. No middle term.</p>
+        <p><span class="m">4<i>x</i><sup>2</sup> − 9 = (2<i>x</i> − 3)(2<i>x</i> + 3)</span> → <span class="m"><i>x</i> = ±<span class="frac"><span>3</span><span>2</span></span></span>.</p>
+        <p class="small">A <b>sum</b> of squares, <span class="m"><i>x</i><sup>2</sup> + 9</span>, doesn't factor and has no real roots.</p></div>
+      <div class="ex"><h4>Sum &amp; product of roots <span class="lvl l2">L2</span></h4>
+        <p>Sum <span class="m">= −<span class="frac"><span><i>b</i></span><span><i>a</i></span></span></span>, product <span class="m">= <span class="frac"><span><i>c</i></span><span><i>a</i></span></span></span>. No need to solve.</p>
+        <p class="small">For <span class="m">2<i>x</i><sup>2</sup> − 6<i>x</i> + 1 = 0</span>: sum = 3, product = <span class="m"><span class="frac"><span>1</span><span>2</span></span></span>.</p></div>
+      <div class="ex"><h4>Vertex form / completing the square <span class="lvl l2">L2</span></h4>
+        <p><span class="m"><i>y</i> = <i>a</i>(<i>x</i> − <i>h</i>)<sup>2</sup> + <i>k</i></span> has vertex <span class="m">(<i>h</i>, <i>k</i>)</span>. Watch the sign: <span class="m">(<i>x</i> + 3)<sup>2</sup></span> means <span class="m"><i>h</i> = −3</span>.</p>
+        <p class="small">To convert <span class="m"><i>x</i><sup>2</sup> + <i>bx</i> + <i>c</i></span>: halve <i>b</i>, square it, add and subtract it. <span class="m"><i>x</i><sup>2</sup> − 6<i>x</i> + 11 = (<i>x</i> − 3)<sup>2</sup> − 9 + 11 = (<i>x</i> − 3)<sup>2</sup> + 2</span>.</p></div>
+      <div class="ex"><h4>Unknown coefficient <i>k</i> <span class="lvl l3">L3</span></h4>
+        <p>“Exactly one solution” → set <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i> = 0</span>. “No real solutions” → <span class="m">&lt; 0</span>. “Two solutions” → <span class="m">&gt; 0</span>. Then solve for <i>k</i>.</p>
+        <p class="small"><span class="m"><i>x</i><sup>2</sup> + 8<i>x</i> + <i>k</i> = 0</span> has one solution → <span class="m">64 − 4<i>k</i> = 0</span> → <span class="m"><i>k</i> = 16</span>.</p></div>
+      <div class="ex"><h4>Parabola meets a line <span class="lvl l3">L3</span></h4>
+        <p>Set the two equal, move everything to one side, then use the discriminant to count intersection points.</p>
+        <p class="small"><span class="m"><i>x</i><sup>2</sup> + 1 = 2<i>x</i></span> → <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> + 1 = 0</span>, discriminant 0 → the line is tangent: 1 point.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CHEAT SHEET ============ -->
+<div id="view-cheat" data-viewpanel hidden>
+  <p class="view-intro">Everything to memorize on one page. Read it, cover it, say it back.</p>
+  <div class="cheat">
+    <div class="card"><h3>Shape</h3><ul>
+      <li><span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i></span>, <span class="m"><i>a</i> ≠ 0</span></li>
+      <li><span class="m"><i>a</i> &gt; 0</span> → ∪ (min), <span class="m"><i>a</i> &lt; 0</span> → ∩ (max)</li>
+      <li>Vertex <span class="m"><i>x</i> = −<i>b</i> / 2<i>a</i></span>; plug in for <i>y</i></li>
+      <li>y-intercept is <span class="m">(0, <i>c</i>)</span></li>
+      <li>Roots = x-intercepts = where <span class="m"><i>y</i> = 0</span></li></ul></div>
+    <div class="card"><h3>Count the roots</h3><ul>
+      <li><span class="m"><i>D</i> = <i>b</i><sup>2</sup> − 4<i>ac</i></span></li>
+      <li><span class="m"><i>D</i> &gt; 0</span> → 2 · <span class="m"><i>D</i> = 0</span> → 1 (double) · <span class="m"><i>D</i> &lt; 0</span> → 0 real</li>
+      <li><i>a</i>, <i>c</i> opposite signs → always 2</li>
+      <li><i>D</i> a perfect square → factors with whole numbers</li>
+      <li>Vertex below/on/above axis (∪) → 2 / 1 / 0. Flip for ∩.</li></ul></div>
+    <div class="card"><h3>Factoring rule</h3><ul>
+      <li>Two numbers: <b>× to <span class="m"><i>a</i>·<i>c</i></span></b>, <b>+ to <i>b</i></b></li>
+      <li><i>c</i> + → both take <i>b</i>'s sign</li>
+      <li><i>c</i> − → opposite signs; bigger takes <i>b</i>'s sign</li>
+      <li><span class="m"><i>a</i> &gt; 1</span>: split middle, group, pull out the common bracket</li>
+      <li>Pull out −1 and GCF first. They are never roots.</li></ul></div>
+    <div class="card"><h3>Solving</h3><ul>
+      <li><span class="m"><i>A</i>·<i>B</i> = 0</span> ⇒ <span class="m"><i>A</i> = 0</span> or <span class="m"><i>B</i> = 0</span> (only works with 0!)</li>
+      <li><span class="m">(<i>x</i> + 3) = 0</span> → <span class="m"><i>x</i> = −3</span>: the sign flips</li>
+      <li><span class="m">(2<i>x</i> − 5) = 0</span> → <span class="m"><i>x</i> = 5/2</span>: divide by the x number</li>
+      <li>Other heights: <span class="m">… = <i>k</i></span> → move <i>k</i> over first</li>
+      <li>Check by plugging back in</li></ul></div>
+    <div class="card"><h3>Quadratic formula</h3>
+      <p class="eq" style="margin:.2rem 0 .4rem;font-size:1.15rem"><i>x</i> = <span class="frac"><span>−<i>b</i> ± √<span class="rad"><i>b</i><sup>2</sup> − 4<i>ac</i></span></span><span>2<i>a</i></span></span></p><ul>
+      <li>−<i>b</i>: flip <i>b</i>'s sign</li><li><span class="m">(−<i>b</i>)<sup>2</sup></span> is positive</li>
+      <li>Divide the whole top by <span class="m">2<i>a</i></span></li><li>Simplify √, cancel common factors</li></ul></div>
+    <div class="card"><h3>Perfect squares</h3><ul>
+      <li><span class="m">(<i>x</i> + <i>p</i>)<sup>2</sup> = <i>x</i><sup>2</sup> + 2<i>px</i> + <i>p</i><sup>2</sup></span></li>
+      <li>Ends are squares, middle is 2 × roots, last term positive</li>
+      <li>One double root; graph touches at the vertex</li></ul></div>
+    <div class="card" data-extra><h3>SAT extras <span class="extra-tag">Beyond notes</span></h3><ul>
+      <li><span class="m"><i>A</i><sup>2</sup> − <i>B</i><sup>2</sup> = (<i>A</i> − <i>B</i>)(<i>A</i> + <i>B</i>)</span>; <span class="m"><i>x</i><sup>2</sup> + <i>B</i><sup>2</sup></span> doesn't factor</li>
+      <li>Sum of roots <span class="m">−<i>b</i>/<i>a</i></span>, product <span class="m"><i>c</i>/<i>a</i></span></li>
+      <li>Vertex form <span class="m"><i>a</i>(<i>x</i> − <i>h</i>)<sup>2</sup> + <i>k</i></span> → vertex <span class="m">(<i>h</i>, <i>k</i>)</span></li>
+      <li>Complete the square: add &amp; subtract <span class="m">(<i>b</i>/2)<sup>2</sup></span></li>
+      <li>“One solution” ⇔ <span class="m"><i>D</i> = 0</span>; “none” ⇔ <span class="m"><i>D</i> &lt; 0</span></li>
+      <li>Parabola ∩ line: set equal, move to one side, use <i>D</i></li></ul></div>
+    <div class="card"><h3>Common traps</h3><ul>
+      <li>Reading <i>a</i> from the first term when <span class="m"><i>x</i><sup>2</sup></span> isn't first</li>
+      <li>Forgetting the minus in <span class="m">−<i>b</i>/2<i>a</i></span></li>
+      <li>Writing <span class="m">−3<sup>2</sup> = −9</span> inside <span class="m"><i>b</i><sup>2</sup></span></li>
+      <li>Keeping the bracket's sign for the root</li>
+      <li>Counting a pulled-out GCF as a root</li>
+      <li>Setting brackets equal to a non-zero number</li></ul></div>
+  </div>
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div id="view-quiz" data-viewpanel hidden>
+  <div id="quizSetup">
+    <p class="view-intro">Every question is generated fresh with new integers, so repeats test the idea, not your memory of the numbers. <b>Weak spots first</b> serves the skills you miss most more often.</p>
+    <div class="card">
+      <div class="setup-grid">
+        <div class="opt-group" id="topicChecks"><h4>Topics</h4></div>
+        <div class="opt-group">
+          <h4>Levels</h4>
+          <label class="check"><input type="checkbox" data-level="1"><span class="grow"><span class="lvl l1">L1</span> Foundation</span></label>
+          <label class="check"><input type="checkbox" data-level="2"><span class="grow"><span class="lvl l2">L2</span> Core</span></label>
+          <label class="check"><input type="checkbox" data-level="3"><span class="grow"><span class="lvl l3">L3</span> Stretch / SAT hard</span></label>
+          <h4 style="margin-top:10px">Length</h4>
+          <div class="seg" id="lenSeg"><button data-len="5">5</button><button data-len="10">10</button><button data-len="20">20</button><button data-len="0">Endless</button></div>
+          <label class="check" style="margin-top:10px"><input type="checkbox" id="smartToggle"><span class="grow">Weak spots first</span></label>
+        </div>
+      </div>
+      <div class="row" style="margin-top:16px;justify-content:space-between">
+        <span class="muted small" id="setupCount"></span>
+        <div class="row"><button class="btn ghost" id="startWeak">Drill my 3 weakest</button><button class="btn" id="startQuiz">Start quiz</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="quizRun" hidden>
+    <div class="qwrap">
+      <div class="qmeta"><span id="qCounter"></span><span id="qScore"></span><button class="btn ghost small" id="endQuiz">End quiz</button></div>
+      <div class="progress"><span id="qBar" style="width:0%"></span></div>
+      <div class="qcard" id="qCard"></div>
+    </div>
+  </div>
+
+  <div id="quizDone" hidden>
+    <div class="qwrap card" id="doneBody"></div>
+  </div>
+</div>
+
+<!-- ============ PROGRESS ============ -->
+<div id="view-progress" data-viewpanel hidden>
+  <p class="view-intro">Mastery is judged on your last 5 tries of each skill. <b>Mastered</b> means at least 5 tries, 4 of the last 5 right, and the most recent one right. Results are saved in this browser only.</p>
+  <div class="stats" id="stats"></div>
+  <div class="card" style="padding:6px 8px 10px">
+    <div class="tbl-wrap"><table id="skillTable"></table></div>
+  </div>
+
+  <h3>Recent mistakes</h3>
+  <div class="mist" id="mistakes"></div>
+
+  <h3>Back up &amp; restore</h3>
+  <div class="card">
+    <div class="setup-grid">
+      <div class="opt-group">
+        <h4>Export</h4>
+        <div class="row"><button class="btn" id="exportDl">Download .json</button><button class="btn ghost" id="exportCopy">Copy JSON</button></div>
+        <p class="small muted">If the download doesn't start (some hosted viewers block downloads), use Copy JSON and paste it into a file.</p>
+        <div id="exportMsg"></div>
+      </div>
+      <div class="opt-group">
+        <h4>Import</h4>
+        <input type="file" id="importFile" accept=".json,application/json">
+        <textarea id="importText" placeholder="…or paste exported JSON here"></textarea>
+        <div class="row">
+          <label class="check"><input type="radio" name="importMode" value="merge" checked> Merge with current</label>
+          <label class="check"><input type="radio" name="importMode" value="replace"> Replace current</label>
+          <button class="btn" id="importBtn">Import</button>
+        </div>
+        <div id="importMsg"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;border-top:1px solid var(--rule);padding-top:12px">
+      <span id="resetArea"><button class="btn danger small" id="resetBtn">Reset all progress</button></span>
+    </div>
+  </div>
+</div>
+</main>
+
+<script>
+"use strict";
+/* ================= helpers ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const R = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+const RNZ = (lo, hi) => { let n; do n = R(lo, hi); while (n === 0); return n; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+const sgn = n => n < 0 ? -1 : 1;
+const MINUS = "−";
+const X = "<i>x</i>";
+const SQ = "<sup>2</sup>";
+const m = h => `<span class="m">${h}</span>`;
+const num = n => n < 0 ? MINUS + Math.abs(n) : String(n);
+const par = n => n < 0 ? `(${num(n)})` : String(n);
+function frac(n, d = 1) {
+  if (d < 0) { n = -n; d = -d; }
+  const g = gcd(n, d) || 1; n /= g; d /= g;
+  if (d === 1) return num(n);
+  return (n < 0 ? MINUS : "") + `<span class="frac"><span>${Math.abs(n)}</span><span>${d}</span></span>`;
+}
+// terms: [[coef, power], ...] in display order
+function polyT(terms, v = X) {
+  let out = "";
+  for (const [k, p] of terms) {
+    if (k === 0) continue;
+    const mag = Math.abs(k);
+    const body = p === 0 ? String(mag) : (mag === 1 ? "" : mag) + v + (p === 2 ? SQ : "");
+    out += out === "" ? (k < 0 ? MINUS : "") + body : (k < 0 ? " − " : " + ") + body;
+  }
+  return out || "0";
+}
+const poly = (coefs, v) => polyT(coefs.map((k, i) => [k, coefs.length - 1 - i]), v);
+// bracket (p·x + q)
+function br(p, q) { return `(${p === 1 ? "" : p}${X}${q === 0 ? "" : (q < 0 ? " − " : " + ") + Math.abs(q)})`; }
+// root value as rational [n, d]
+const rv = (n, d = 1) => { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d) || 1; return [n / g, d / g]; };
+const rf = r => r[0] / r[1];
+const rootsSetHTML = rs => {
+  const uniq = []; rs.forEach(r => { if (!uniq.some(u => u[0] === r[0] && u[1] === r[1])) uniq.push(r); });
+  uniq.sort((a, b) => rf(a) - rf(b));
+  return uniq.map(r => m(`${X} = ${frac(r[0], r[1])}`)).join(" or ");
+};
+function sqrtSplit(n) { let s = 1; for (let k = 2; k * k <= n; k++) while (n % (k * k) === 0) { n /= k * k; s *= k; } return [s, n]; }
+const isSq = n => n >= 0 && Number.isInteger(Math.sqrt(n));
+// (B ± √D)/den simplified. imag = √(−D) written with i
+function radForm(B, D, den, imag = false) {
+  let [s, r] = sqrtSplit(D);
+  if (den < 0) { den = -den; B = -B; }
+  const g = gcd(gcd(B, s), den) || 1; B /= g; s /= g; den /= g;
+  const core = (imag ? "<i>i</i>" : "") + (r > 1 ? `√<span class="rad">${r}</span>` : "");
+  const rad = core === "" ? String(s) : (s === 1 ? "" : s) + core;
+  const numer = (B !== 0 ? num(B) + " ± " : "±") + rad;
+  const html = den === 1 ? numer : `<span class="frac"><span>${numer}</span><span>${den}</span></span>`;
+  return { html: m(`${X} = ${html}`), key: [B, s, r, den, imag].join("|") };
+}
+const text = h => String(h).replace(/<sup>2<\/sup>/g, "²").replace(/<span class="frac"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, "($1)/($2)").replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+const eqHTML = (coefs, rhs = 0) => m(`${poly(coefs)} = ${num(rhs)}`);
+const fx = (a, b, c, x) => a * x * x + b * x + c;
+
+/* ================= graph ================= */
+function niceStep(r) { return r <= 16 ? 1 : r <= 34 ? 2 : r <= 80 ? 5 : r <= 160 ? 10 : 20; }
+function graphSVG(a, b, c, opt = {}) {
+  const W = opt.w || 360, H = opt.h || 250, pad = 22;
+  const hx = -b / (2 * a), yv = fx(a, b, c, hx), D = b * b - 4 * a * c;
+  let half = 5;
+  if (D > 0) half = Math.max(5, Math.sqrt(D) / Math.abs(2 * a) + 2);
+  half = Math.min(half, 14);
+  const x0 = Math.floor(hx - half), x1 = Math.ceil(hx + half);
+  let lo = Math.min(0, yv), hi = Math.max(0, yv);
+  if (opt.line != null) { lo = Math.min(lo, opt.line); hi = Math.max(hi, opt.line); }
+  const span = Math.max(6, hi - lo);
+  if (a > 0) { lo -= Math.max(1.5, span * .18); hi += span * .9; } else { hi += Math.max(1.5, span * .18); lo -= span * .9; }
+  lo = Math.floor(lo); hi = Math.ceil(hi);
+  const sx = x => pad + (x - x0) / (x1 - x0) * (W - 2 * pad);
+  const sy = y => H - pad - (y - lo) / (hi - lo) * (H - 2 * pad);
+  const xs = niceStep(x1 - x0), ys = niceStep(hi - lo);
+  let g = "";
+  for (let x = Math.ceil(x0 / xs) * xs; x <= x1; x += xs) g += `<line x1="${sx(x)}" y1="${pad}" x2="${sx(x)}" y2="${H - pad}"/>`;
+  for (let y = Math.ceil(lo / ys) * ys; y <= hi; y += ys) g += `<line x1="${pad}" y1="${sy(y)}" x2="${W - pad}" y2="${sy(y)}"/>`;
+  let labels = "";
+  const lx = 2 * xs, ly = 2 * ys;
+  const yAxisX = (x0 <= 0 && x1 >= 0) ? sx(0) : pad;
+  for (let x = Math.ceil(x0 / lx) * lx; x <= x1; x += lx) if (x !== 0) labels += `<text x="${sx(x)}" y="${sy(0) + 13}" text-anchor="middle">${num(x)}</text>`;
+  for (let y = Math.ceil(lo / ly) * ly; y <= hi; y += ly) if (y !== 0) labels += `<text x="${yAxisX - 4}" y="${sy(y) + 3.5}" text-anchor="end">${num(y)}</text>`;
+  let path = "";
+  const N = 160;
+  for (let i = 0; i <= N; i++) { const x = x0 + (x1 - x0) * i / N; path += (i ? "L" : "M") + sx(x).toFixed(1) + " " + sy(fx(a, b, c, x)).toFixed(1); }
+  const id = "clip" + Math.random().toString(36).slice(2, 8);
+  let marks = "";
+  if (opt.line != null) marks += `<line x1="${pad}" x2="${W - pad}" y1="${sy(opt.line)}" y2="${sy(opt.line)}" stroke="var(--line2)" stroke-width="1.8" stroke-dasharray="5 4"/>`;
+  if (opt.marks) {
+    if (D >= 0) { const s = Math.sqrt(D); [(-b - s) / (2 * a), (-b + s) / (2 * a)].forEach(r => { marks += `<circle cx="${sx(r)}" cy="${sy(0)}" r="4.2" fill="var(--sheet)" stroke="var(--curve)" stroke-width="2"/>`; }); }
+    marks += `<circle cx="${sx(hx)}" cy="${sy(yv)}" r="3.6" fill="var(--line2)"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Graph of a parabola" style="font:10px var(--f-mono);">
+    <defs><clipPath id="${id}"><rect x="${pad}" y="${pad}" width="${W - 2 * pad}" height="${H - 2 * pad}"/></clipPath></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="var(--sheet)"/>
+    <g stroke="var(--grid)" stroke-width="1">${g}</g>
+    <g stroke="var(--ink-2)" stroke-width="1.3"><line x1="${pad}" y1="${sy(0)}" x2="${W - pad}" y2="${sy(0)}"/>${(x0 <= 0 && x1 >= 0) ? `<line x1="${sx(0)}" y1="${pad}" x2="${sx(0)}" y2="${H - pad}"/>` : ""}</g>
+    <g fill="var(--ink-2)">${labels}</g>
+    <path d="${path}" fill="none" stroke="var(--curve)" stroke-width="2.6" stroke-linejoin="round" clip-path="url(#${id})"/>
+    ${marks}
+  </svg>`;
+}
+
+/* ================= exact facts (explorer + explanations) ================= */
+function factorForm(a, b, c) {
+  const D = b * b - 4 * a * c; if (!isSq(D)) return null;
+  const s = Math.sqrt(D);
+  const r1 = rv(-b + s, 2 * a), r2 = rv(-b - s, 2 * a);
+  const k = a / (r1[1] * r2[1]);
+  const b1 = br(r1[1], -r1[0]), b2 = br(r2[1], -r2[0]);
+  const lead = k === 1 ? "" : k === -1 ? MINUS : num(k);
+  if (D === 0) return { html: lead + b1 + SQ, roots: [r1], k };
+  return { html: lead + b1 + b2, roots: [r1, r2], k };
+}
+function rootsInfo(a, b, c) {
+  const D = b * b - 4 * a * c;
+  if (D < 0) return { D, count: 0, html: "none (real)", cplx: radForm(-b, -D, 2 * a, true).html };
+  if (isSq(D)) { const f = factorForm(a, b, c); return { D, count: D === 0 ? 1 : 2, html: rootsSetHTML(f.roots), factor: f }; }
+  return { D, count: 2, html: radForm(-b, D, 2 * a).html };
+}
+const discWork = (a, b, c) => { const D = b * b - 4 * a * c; return m(`${par(b)}${SQ} − 4(${num(a)})(${num(c)}) = ${b * b} ${-4 * a * c < 0 ? "−" : "+"} ${Math.abs(4 * a * c)} = ${num(D)}`); };
+
+/* ================= question generators ================= */
+const ROOTS_HINT = "Separate answers with a comma, e.g. 3, -1. Fractions like -1/2 are fine.";
+const NUM_HINT = "Enter a number. Fractions like 3/2 are fine.";
+function mcq(prompt, choices, extra = {}) { return Object.assign({ kind: "mc", prompt, choices: shuffle(choices) }, extra); }
+function uniqChoices(list) { const seen = new Set(); return list.filter(c => { const k = text(c.html); if (seen.has(k)) return false; seen.add(k); return true; }); }
+
+// distinct integer roots
+function twoRoots(lo, hi, { allowZero = false, noOpp = false, maxC = 99 } = {}) {
+  for (;;) {
+    const r1 = allowZero ? R(lo, hi) : RNZ(lo, hi), r2 = allowZero ? R(lo, hi) : RNZ(lo, hi);
+    if (r1 === r2) continue; if (noOpp && r1 === -r2) continue; if (Math.abs(r1 * r2) > maxC) continue;
+    return [r1, r2];
+  }
+}
+// (p x + q)(r x + s) with a = p r > 1
+function acBuild() {
+  for (;;) {
+    const p = pick([1, 2, 3]), r = pick([1, 2, 3, 5]);
+    if (p * r < 2) continue;
+    const q = RNZ(-7, 7), s = RNZ(-7, 7);
+    if (gcd(p, q) !== 1 || gcd(r, s) !== 1) continue;
+    if (q * r === s * p) continue;
+    const a = p * r, b = p * s + q * r, c = q * s;
+    if (b === 0 || Math.abs(b) > 30) continue;
+    return { p, q, r, s, a, b, c };
+  }
+}
+function pairDistractors(prod, sum, correct) {
+  const out = [];
+  const [m1, n1] = correct;
+  out.push({ pair: [-m1, -n1], why: `Those multiply to ${num(prod)} but add to ${num(-sum)}. Check the signs.` });
+  const pairs = [];
+  for (let d = 1; d <= Math.abs(prod); d++) if (prod % d === 0) { pairs.push([d, prod / d]); pairs.push([-d, -prod / d]); }
+  shuffle(pairs).forEach(([u, v]) => { if (u + v !== sum) out.push({ pair: [u, v], why: `They multiply to ${num(prod)} but add to ${num(u + v)}, not ${num(sum)}.` }); });
+  out.push({ pair: [m1 + 1, n1 - 1], why: `They add to ${num(sum)} but multiply to ${num((m1 + 1) * (n1 - 1))}, not ${num(prod)}.` });
+  return out;
+}
+const pairKey = p => p.slice().sort((x, y) => x - y).join(",");
+const pairHTML = p => { const s = p.slice().sort((x, y) => x - y); return m(`${num(s[0])} and ${num(s[1])}`); };
+function pairChoices(prod, sum, correct) {
+  const ch = [{ html: pairHTML(correct), ok: true, key: pairKey(correct) }];
+  for (const d of pairDistractors(prod, sum, correct)) {
+    if (ch.length >= 4) break;
+    if (d.pair[0] * d.pair[1] === prod && d.pair[0] + d.pair[1] === sum) continue;
+    const k = pairKey(d.pair); if (ch.some(c => c.key === k)) continue;
+    ch.push({ html: pairHTML(d.pair), ok: false, why: d.why, key: k });
+  }
+  return ch;
+}
+const countChoices = (correct, whyMap = {}) => [
+  { html: "2 real roots", ok: correct === 2, why: whyMap[2] },
+  { html: "1 real root (a double root)", ok: correct === 1, why: whyMap[1] },
+  { html: "0 real roots", ok: correct === 0, why: whyMap[0] }];
+
+const G = {};
+
+/* ---- Parabola & graph ---- */
+G.open = () => {
+  const a = RNZ(-4, 4), b = RNZ(-8, 8), c = RNZ(-9, 9);
+  const nonstd = Math.random() < .55;
+  const terms = nonstd ? pick([[[c, 0], [b, 1], [a, 2]], [[b, 1], [a, 2], [c, 0]], [[c, 0], [a, 2], [b, 1]]]) : [[a, 2], [b, 1], [c, 0]];
+  const firstSign = sgn(terms[0][0]);
+  const trapWhy = nonstd && firstSign !== sgn(a) ? "The first number isn't always a. a is the coefficient of x², wherever that term sits." : "Look only at the x² term's coefficient.";
+  return mcq(`Which way does the parabola ${m(`<i>y</i> = ${polyT(terms)}`)} open?`, [
+    { html: "Up ∪", ok: a > 0, why: trapWhy },
+    { html: "Down ∩", ok: a < 0, why: trapWhy },
+    { html: "You can't tell without graphing it", ok: false, why: "The sign of a alone decides the direction." }], {
+    answerHTML: a > 0 ? "Up ∪" : "Down ∩",
+    explain: [nonstd ? `In standard form: ${m(`<i>y</i> = ${poly([a, b, c])}`)}.` : "", `The ${m(X + SQ)} coefficient is ${m(`<i>a</i> = ${num(a)}`)}, which is ${a > 0 ? "positive → opens up" : "negative → opens down"}.`].filter(Boolean)
+  });
+};
+G.vertexX = () => {
+  let a, h, b, c;
+  do { a = RNZ(-3, 3); h = R(-6, 6); b = -2 * a * h; c = R(-9, 9); } while (b === 0 && Math.random() < .7);
+  const traps = [];
+  if (h !== 0) traps.push({ vals: [-h], msg: "Sign slip. The formula is x = −b ⁄ 2a. Keep the minus." });
+  if (h !== 0) traps.push({ vals: [2 * h], msg: "Divide by 2a, not by a." });
+  if (h !== 0) traps.push({ vals: [-2 * h], msg: "Two slips: keep the minus, and divide by 2a, not a." });
+  return { kind: "num", prompt: `What is the x-coordinate of the vertex of ${m(`<i>y</i> = ${poly([a, b, c])}`)}?`, answer: h, answerHTML: m(`${X} = ${num(h)}`), traps, inputHint: NUM_HINT,
+    explain: [`${m(`<i>a</i> = ${num(a)}, <i>b</i> = ${num(b)}`)}`, `${m(`${X} = −<i>b</i> ⁄ 2<i>a</i> = −${par(b)} ⁄ (2 · ${par(a)}) = ${num(-b)} ⁄ ${num(2 * a)} = ${num(h)}`)}`] };
+};
+G.vertexY = () => {
+  let a, h, k, b, c;
+  do { a = pick([1, 1, -1, 2, -2, 3]); h = RNZ(-5, 5); k = R(-9, 9); b = -2 * a * h; c = a * h * h + k; } while (Math.abs(c) > 60 || h === k);
+  const word = a > 0 ? "minimum" : "maximum";
+  return { kind: "num", prompt: `What is the ${word} value of ${m(`<i>y</i> = ${poly([a, b, c])}`)}?`, answer: k, answerHTML: m(num(k)), inputHint: NUM_HINT,
+    traps: [{ vals: [h], msg: "That's the x-coordinate of the vertex. Plug it back in to get the y-value." }, { vals: [c], msg: "That's the y-intercept (x = 0), not the vertex." }],
+    explain: [`${a > 0 ? "a > 0, so it opens up and the vertex is the lowest point." : "a < 0, so it opens down and the vertex is the highest point."}`,
+      `Vertex x: ${m(`−${par(b)} ⁄ (2 · ${par(a)}) = ${num(h)}`)}`,
+      `Plug in: ${m(`${a === 1 ? "" : a === -1 ? MINUS : num(a)}${par(h)}${SQ} ${b < 0 ? "−" : "+"} ${Math.abs(b)}·${par(h)} ${c < 0 ? "−" : "+"} ${Math.abs(c)} = ${num(k)}`)}`] };
+};
+G.readGraph = () => {
+  const cs = pick([0, 1, 2]), a = pick([1, 1, -1, -1, 2, -2]), h = R(-4, 4);
+  const k = cs === 1 ? 0 : cs === 2 ? -sgn(a) * R(1, 6) : sgn(a) * R(1, 6);
+  const b = -2 * a * h, c = a * h * h + k;
+  const graph = graphSVG(a, b, c);
+  const where = k === 0 ? "on the axis" : (k > 0 ? "above" : "below") + " the axis";
+  const v = pick(["count", "count", "signA", "signD"]);
+  if (v === "signA") return mcq("Look at the graph. What is the sign of a?", [
+    { html: m("<i>a</i> &gt; 0"), ok: a > 0, why: "Arms point up ∪ means a > 0; arms down ∩ means a < 0." },
+    { html: m("<i>a</i> &lt; 0"), ok: a < 0, why: "Arms point up ∪ means a > 0; arms down ∩ means a < 0." },
+    { html: m("<i>a</i> = 0"), ok: false, why: "If a = 0 it isn't a parabola at all; it's a line." }], { graph, answerHTML: a > 0 ? "a > 0" : "a < 0", explain: [`It opens ${a > 0 ? "up ∪, so a > 0" : "down ∩, so a < 0"}.`] });
+  if (v === "signD") return mcq(`Look at the graph of ${m("<i>y</i> = <i>ax</i>" + SQ + " + <i>bx</i> + <i>c</i>")}. What can you say about ${m("<i>b</i>" + SQ + " − 4<i>ac</i>")}?`, [
+    { html: "It's positive", ok: cs === 2 }, { html: "It's zero", ok: cs === 1 }, { html: "It's negative", ok: cs === 0 }],
+    { graph, answerHTML: ["Negative", "Zero", "Positive"][cs], explain: [`The vertex is ${where}, so the curve meets the x-axis ${["0 times", "once", "twice"][cs]}.`, `${["0 roots → negative", "1 root → zero", "2 roots → positive"][cs]} discriminant.`] });
+  return mcq(`The graph shows ${m("<i>y</i> = <i>f</i>(" + X + ")")}. How many real solutions does ${m("<i>f</i>(" + X + ") = 0")} have?`, countChoices(cs), {
+    graph, answerHTML: String(cs), explain: [`Solutions of ${m("<i>f</i>(" + X + ") = 0")} are where the curve meets the x-axis.`, `The vertex is ${where} and the curve opens ${a > 0 ? "up" : "down"}, so it meets the axis ${["0 times", "once (touches)", "twice"][cs]}.`] });
+};
+G.vertexPos = () => {
+  const up = Math.random() < .5, h = R(-6, 6), k = Math.random() < .2 ? 0 : RNZ(-7, 7);
+  const ans = k === 0 ? 1 : (up ? (k < 0 ? 2 : 0) : (k > 0 ? 2 : 0));
+  const dirTxt = Math.random() < .5 ? `opens ${up ? "upward" : "downward"}` : `has ${m(`<i>a</i> = ${num(up ? R(1, 5) : -R(1, 5))}`)}`;
+  const flipped = k === 0 ? 1 : (up ? (k > 0 ? 2 : 0) : (k < 0 ? 2 : 0));
+  const why = {}; if (flipped !== ans) why[flipped] = up ? "That would be right if it opened downward." : "For a downward parabola the rule flips: vertex above → 2, below → 0.";
+  return mcq(`A parabola ${dirTxt} and its vertex is at ${m(`(${num(h)}, ${num(k)})`)}. How many x-intercepts does it have?`, countChoices(ans, why), {
+    answerHTML: String(ans), explain: [`The vertex is ${k === 0 ? "on" : k > 0 ? "above" : "below"} the x-axis (${m(`<i>y</i> = ${num(k)}`)}) and the arms go ${up ? "up" : "down"}.`,
+      k === 0 ? "It touches the axis at the vertex: 1 intercept." : ans === 2 ? "The arms head toward the axis, so it crosses twice." : "The arms head away from the axis, so it never reaches it."] });
+};
+
+/* ---- Discriminant ---- */
+G.discCalc = () => {
+  const a = RNZ(-4, 4), b = RNZ(-9, 9), c = RNZ(-9, 9), D = b * b - 4 * a * c;
+  const traps = [];
+  if (b < 0) traps.push({ vals: [-(b * b) - 4 * a * c], msg: `${par(b)}² = ${b * b}. Squaring a negative gives a positive.` });
+  traps.push({ vals: [b * b + 4 * a * c], msg: "Watch the sign of −4ac: multiply −4 · a · c with all their signs." });
+  return { kind: "num", prompt: `For ${eqHTML([a, b, c])}, what is the discriminant ${m("<i>b</i>" + SQ + " − 4<i>ac</i>")}?`, answer: D, answerHTML: m(num(D)), traps, inputHint: NUM_HINT,
+    explain: [m(`<i>a</i> = ${num(a)}, <i>b</i> = ${num(b)}, <i>c</i> = ${num(c)}`), discWork(a, b, c), `So it has ${D > 0 ? "2 real roots" : D === 0 ? "1 double root" : "no real roots"}.`] };
+};
+G.discCount = () => {
+  const cs = pick([0, 1, 2]); let a, b, c;
+  if (cs === 1) { const p = pick([1, 1, 1, 2, 3]), q = RNZ(-6, 6), s = pick([1, 1, -1, 2]); a = s * p * p; b = s * 2 * p * q; c = s * q * q; }
+  else { do { a = RNZ(-4, 4); b = R(-8, 8); c = RNZ(-9, 9); } while (cs === 2 ? b * b - 4 * a * c <= 0 : b * b - 4 * a * c >= 0); }
+  const D = b * b - 4 * a * c;
+  return mcq(`How many real roots does ${eqHTML([a, b, c])} have?`, countChoices(cs), { answerHTML: String(cs),
+    explain: [`Discriminant: ${discWork(a, b, c)}`, `${D > 0 ? "Positive → 2 roots" : D === 0 ? "Zero → 1 double root" : "Negative → 0 real roots"}.`, a * c < 0 ? "Shortcut: a and c have opposite signs, so it had to be 2." : ""].filter(Boolean) });
+};
+G.discWhy = () => {
+  const t = pick([1, 2, 3, 4, 5]);
+  if (t === 1) { const D = -R(2, 40); return mcq(`For some quadratic, ${m(`<i>b</i>${SQ} − 4<i>ac</i> = ${num(D)}`)}. What does that tell you?`, [
+    { html: `No real roots: no real number squared gives ${num(D)}`, ok: true },
+    { html: "Two roots, because the square root makes it positive", ok: false, why: "√ of a negative is not a real number; it doesn't turn positive." },
+    { html: "One root", ok: false, why: "One root needs the discriminant to be exactly 0." },
+    { html: "The parabola opens down", ok: false, why: "Direction comes from the sign of a, not the discriminant." }], { answerHTML: "No real roots", explain: ["In the formula you'd need √(negative). No real number squares to a negative, so there are no real roots. The graph never reaches the x-axis."] }); }
+  if (t === 2) return mcq(`If ${m("<i>b</i>" + SQ + " − 4<i>ac</i> = 0")}, then in the quadratic formula the ${m("±√0")} part…`, [
+    { html: "gives the same answer twice → one double root", ok: true },
+    { html: "means there are no roots", ok: false, why: "√0 = 0 is a perfectly good real number." },
+    { html: `means ${m(X + " = 0")} is the root`, ok: false, why: "The root is −b ⁄ 2a, which is usually not 0." },
+    { html: "means the parabola is a flat line", ok: false, why: "It's still a parabola; it just touches the axis at its vertex." }], { answerHTML: "One double root", explain: [`${m(`${X} = (−<i>b</i> ± 0) ⁄ 2<i>a</i> = −<i>b</i> ⁄ 2<i>a</i>`)}: + and − give the same value, so there's one root, at the vertex.`] });
+  if (t === 3) { const tt = RNZ(-4, 4), b = 2 * tt, T = tt * tt, c1 = T - R(2, 5), c2 = T + R(1, 4);
+    return mcq(`In ${m(`<i>y</i> = ${X}${SQ} ${b < 0 ? "−" : "+"} ${Math.abs(b)}${X} + <i>c</i>`)}, ${m("<i>c</i>")} increases from ${m(num(c1))} to ${m(num(c2))}. What happens to the number of real roots?`, [
+      { html: "2 → 1 → 0", ok: true }, { html: "0 → 1 → 2", ok: false, why: "Raising c slides the curve up, away from the axis, so roots disappear." },
+      { html: "It stays at 2", ok: false, why: `Compute the discriminant at both ends: ${b * b - 4 * c1} and ${b * b - 4 * c2}.` },
+      { html: "2 → 0, skipping 1", ok: false, why: `Sliding smoothly, the vertex passes through the axis at c = ${T}, where there's exactly 1 root.` }],
+      { answerHTML: "2 → 1 → 0", explain: [`Changing c slides the same curve up. The vertex is at y = c − ${T}.`, `Below the axis (c < ${T}) → 2, on it (c = ${T}) → 1, above (c > ${T}) → 0.`] }); }
+  if (t === 4) { const r = RNZ(-6, 6); return mcq(`A quadratic has a double root at ${m(`${X} = ${num(r)}`)}. What does its graph do there?`, [
+    { html: "Touches the x-axis at its vertex and turns back", ok: true },
+    { html: "Crosses the x-axis twice at that point", ok: false, why: "A curve can't cross at the same point twice; it touches." },
+    { html: "Never reaches the x-axis", ok: false, why: "That's the 0-roots case." },
+    { html: "Crosses straight through the axis", ok: false, why: "Crossing happens at single roots. At a double root the graph bounces." }], { answerHTML: "Touches at the vertex", explain: [`${m(`(${X} ${r < 0 ? "+" : "−"} ${Math.abs(r)})${SQ}`)} is never negative and is 0 only at ${m(`${X} = ${num(r)}`)}, so the curve touches the axis there and turns back. That point is the vertex.`] }); }
+  const D = pick([2, 3, 5, 6, 7, 8, 10, 12, 13, 17, 20, 21, 24, 28]);
+  return mcq(`The discriminant of a quadratic is ${m(num(D))}. Which is true about its roots?`, [
+    { html: "Two real roots, but irrational: use the formula", ok: true },
+    { html: "Two whole-number roots: it factors nicely", ok: false, why: `${D} isn't a perfect square, so the roots involve √${D}.` },
+    { html: "No real roots", ok: false, why: "The discriminant is positive, so there are 2 real roots." },
+    { html: "One double root", ok: false, why: "That needs a discriminant of exactly 0." }], { answerHTML: "Two irrational roots", explain: [`Positive → 2 real roots. Not a perfect square → ${m(`√${D}`)} doesn't simplify to a whole number, so factoring with integers won't work.`] });
+};
+G.oppSigns = () => {
+  const opp = Math.random() < .7; let a, b, c;
+  a = RNZ(2, 9) * pick([1, -1]); b = RNZ(-25, 25);
+  c = (opp ? -sgn(a) : sgn(a)) * R(11, 49);
+  const D = b * b - 4 * a * c; const actual = D > 0 ? 2 : D === 0 ? 1 : 0;
+  const cant = { html: "Can't tell without computing b² − 4ac", ok: !opp, why: "When a and c have opposite signs you can tell: it's always 2." };
+  const ch = countChoices(opp ? 2 : -1, opp ? {} : { 0: "With a and c the same sign, it could be 0, 1 or 2. The shortcut doesn't apply.", 1: "With a and c the same sign, it could be 0, 1 or 2.", 2: "Same signs give no shortcut. Here it happens to be " + actual + ", but you had to compute." });
+  ch.push(cant);
+  return mcq(`<b>Without computing the discriminant</b>, how many real roots does ${eqHTML([a, b, c])} have?`, ch, { answerHTML: opp ? "2 real roots" : "Can't tell without computing",
+    explain: opp ? [`a = ${num(a)} and c = ${num(c)} have opposite signs, so −4ac is positive.`, "b² is never negative, so b² − 4ac is positive → always 2 roots."]
+      : [`a = ${num(a)} and c = ${num(c)} have the same sign, so −4ac is negative. The answer depends on whether b² beats 4ac.`, `Computing it: ${discWork(a, b, c)} → ${actual} real root${actual === 1 ? "" : "s"}.`] });
+};
+G.factorable = () => {
+  const kind = pick(["yes", "yes", "irr", "none"]); let a, b, c;
+  if (kind === "yes") { if (Math.random() < .5) { const [r1, r2] = twoRoots(-9, 9, { allowZero: false }); a = 1; b = -(r1 + r2); c = r1 * r2; } else ({ a, b, c } = acBuild()); }
+  else { do { a = pick([1, 1, 2, 3]); b = RNZ(-9, 9); c = RNZ(-9, 9); } while (kind === "irr" ? (b * b - 4 * a * c <= 0 || isSq(b * b - 4 * a * c)) : b * b - 4 * a * c >= 0); }
+  const D = b * b - 4 * a * c; const f = factorForm(a, b, c);
+  return mcq(`Will ${eqHTML([a, b, c])} factor using whole numbers?`, [
+    { html: "Yes, it factors", ok: kind === "yes" },
+    { html: "No: it has real roots, but use the quadratic formula", ok: kind === "irr" },
+    { html: "No: it has no real roots at all", ok: kind === "none" }], { answerHTML: ["Yes", "No, use the formula", "No real roots"][["yes", "irr", "none"].indexOf(kind)],
+    explain: [`Discriminant: ${discWork(a, b, c)}.`, D < 0 ? "Negative → no real roots, so nothing to factor." : isSq(D) ? `${D} = ${Math.sqrt(D)}² is a perfect square → it factors: ${m(f.html + " = 0")}.` : `${D} is positive but not a perfect square → real roots that are irrational. Use the formula.`] });
+};
+
+/* ---- Factoring ---- */
+G.zeroProduct = () => {
+  const t = pick([1, 2, 3]);
+  const [r1, r2] = twoRoots(-8, 8);
+  if (t === 1) return mcq(`To solve ${m(`${br(1, -r1)}${br(1, -r2)} = 0`)}, why can we set each bracket equal to 0?`, [
+    { html: "If A · B = 0, then A = 0 or B = 0", ok: true },
+    { html: "Because both brackets are always 0", ok: false, why: "Only one of them needs to be 0 for the product to be 0." },
+    { html: "Because we divide both sides by the brackets", ok: false, why: "You can't divide by something that might be 0." },
+    { html: "It works for any number on the right, not just 0", ok: false, why: "Only 0 has this property. 2 · 3 = 6 but neither factor is 6." }], { answerHTML: "Zero product property", explain: ["The zero product property: the only way a product is 0 is if one factor is 0.", `So ${m(`${X} = ${num(r1)}`)} or ${m(`${X} = ${num(r2)}`)}.`] });
+  if (t === 2) { const k = RNZ(2, 12); const B = -(r1 + r2), C = r1 * r2 - k;
+    return mcq(`A student solves ${m(`${br(1, -r1)}${br(1, -r2)} = ${k}`)} by writing ${m(`${br(1, -r1).slice(1, -1)} = ${k}`)} or ${m(`${br(1, -r2).slice(1, -1)} = ${k}`)}. Is that valid?`, [
+      { html: "No. That trick only works when the product is 0. Expand, move the number over, then factor.", ok: true },
+      { html: "Yes, set each bracket equal to the number", ok: false, why: `Try it: 2 · 3 = 6, but neither 2 nor 3 equals 6.` },
+      { html: "Yes, but only if the number is positive", ok: false, why: "The sign doesn't matter. Only 0 works." }], { answerHTML: "No", explain: [`Expand and move ${k} over: ${eqHTML([1, B, C])}.`, "Now it's = 0, so factor (or use the formula) and set each bracket to 0."] }); }
+  let k; do k = R(2, 6); while (k === r1 || k === r2);
+  if (r1 === -r2) return G.zeroProduct();
+  return mcq(`What are the solutions of ${m(`${k}${br(1, -r1)}${br(1, -r2)} = 0`)}?`, uniqChoices([
+    { html: rootsSetHTML([rv(r1), rv(r2)]), ok: true, key: "ok" },
+    { html: rootsSetHTML([rv(k), rv(r1), rv(r2)]), ok: false, why: `The ${k} in front is never 0, so it doesn't give a root.`, key: "k" },
+    { html: rootsSetHTML([rv(-r1), rv(-r2)]), ok: false, why: "Sign flip: (x − 3) = 0 gives x = 3, the opposite sign to the number in the bracket.", key: "neg" }]), { answerHTML: rootsSetHTML([rv(r1), rv(r2)]),
+    explain: [`Set each bracket to 0: ${m(`${X} = ${num(r1)}`)} or ${m(`${X} = ${num(r2)}`)}.`, `${k} ≠ 0, so the number in front never makes the product 0.`] });
+};
+G.pairA1 = () => {
+  const [r1, r2] = twoRoots(-9, 9, { noOpp: true }); const mm = -r1, nn = -r2, b = mm + nn, c = mm * nn;
+  return mcq(`To factor ${m(poly([1, b, c]))}, which two numbers multiply to ${m(num(c))} and add to ${m(num(b))}?`, pairChoices(c, b, [mm, nn]), { answerHTML: pairHTML([mm, nn]),
+    explain: [`${m(`${num(mm)} × ${num(nn)} = ${num(c)}`)} and ${m(`${num(mm)} + ${par(nn)} = ${num(b)}`)} ✓`, `So ${m(`${poly([1, b, c])} = ${br(1, mm)}${br(1, nn)}`)}, roots ${m(`${X} = ${num(r1)}, ${num(r2)}`)}.`] });
+};
+G.signs = () => {
+  let r1, r2; do { [r1, r2] = twoRoots(-9, 9, { noOpp: true }); } while (Math.abs(r1) === Math.abs(r2));
+  const mm = -r1, nn = -r2, b = mm + nn, c = mm * nn;
+  const big = Math.abs(mm) > Math.abs(nn) ? mm : nn;
+  const correct = c > 0 ? (b > 0 ? 0 : 1) : (big > 0 ? 2 : 3);
+  const labels = ["Both positive", "Both negative", "Opposite signs; the bigger one is positive", "Opposite signs; the bigger one is negative"];
+  const whys = [c < 0 ? "c is negative, so the signs must be opposite." : "Both positive would add to a positive b.", c < 0 ? "c is negative, so the signs must be opposite." : "Both negative would add to a negative b.",
+    c > 0 ? "c is positive, so both numbers have the same sign." : "The bigger one takes b's sign.", c > 0 ? "c is positive, so both numbers have the same sign." : "The bigger one takes b's sign."];
+  return mcq(`For ${m(poly([1, b, c]))}, what are the signs of the two numbers in the pair?`, labels.map((l, i) => ({ html: l, ok: i === correct, why: whys[i] })), { answerHTML: labels[correct],
+    explain: [c > 0 ? `c = ${num(c)} is positive → same signs → both take b's sign (${b > 0 ? "+" : "−"}).` : `c = ${num(c)} is negative → opposite signs; the bigger one takes b's sign (${b > 0 ? "+" : "−"}).`, `The pair is ${pairHTML([mm, nn])}: ${m(`${poly([1, b, c])} = ${br(1, mm)}${br(1, nn)}`)}.`] });
+};
+G.solveA1 = () => {
+  const [r1, r2] = twoRoots(-9, 9, { allowZero: Math.random() < .15 }); const b = -(r1 + r2), c = r1 * r2;
+  return { kind: "roots", prompt: `Solve by factoring: ${eqHTML([1, b, c])}`, answer: [r1, r2], answerHTML: rootsSetHTML([rv(r1), rv(r2)]), inputHint: ROOTS_HINT,
+    traps: [{ vals: [-r1, -r2], msg: "Signs flipped. (x + 3) = 0 gives x = −3: the root has the opposite sign to the number in the bracket." }],
+    explain: [c === 0 ? `No constant term: take out x → ${m(`${X}${br(1, b)} = 0`)}` : `Multiply to ${num(c)}, add to ${num(b)} → ${pairHTML([-r1, -r2])}`, `${m(`${br(1, -r1)}${br(1, -r2)} = 0`)}`, `${m(`${X} = ${num(r1)}`)} or ${m(`${X} = ${num(r2)}`)}`, `Check: ${m(`${par(r1)}${SQ} ${b < 0 ? "−" : "+"} ${Math.abs(b)}·${par(r1)} ${c < 0 ? "−" : "+"} ${Math.abs(c)} = 0`)} ✓`] };
+};
+G.signFlip = () => {
+  const useA = Math.random() < .35;
+  let brs, roots;
+  if (useA) { const p = pick([2, 3, 5]), q = RNZ(-7, 7); if (gcd(p, q) !== 1) return G.signFlip(); const r2 = RNZ(-8, 8); brs = br(p, q) + br(1, -r2); roots = [rv(-q, p), rv(r2)]; }
+  else { const [r1, r2] = twoRoots(-9, 9); brs = br(1, -r1) + br(1, -r2); roots = [rv(r1), rv(r2)]; }
+  const neg = roots.map(r => [-r[0], r[1]]);
+  const ch = [{ html: rootsSetHTML(roots), ok: true }, { html: rootsSetHTML(neg), ok: false, why: "Signs flipped. Solve each bracket: (x + 4) = 0 gives x = −4." },
+    { html: rootsSetHTML([roots[0], neg[1]]), ok: false, why: "One of the two signs is wrong. Solve each bracket separately." }];
+  if (useA) { const nb = roots[0][1], na = roots[0][0]; ch.push({ html: rootsSetHTML([rv(na * nb), roots[1]]), ok: false, why: "For (px + q) = 0, divide by p: x = −q ⁄ p." }); }
+  return mcq(`What are the solutions of ${m(brs + " = 0")}?`, uniqChoices(ch), { answerHTML: rootsSetHTML(roots),
+    explain: ["Set each bracket equal to 0 and solve.", ...roots.map(r => `${m(`${X} = ${frac(r[0], r[1])}`)}`)] });
+};
+G.acMethod = () => {
+  const { p, q, r, s, a, b, c } = acBuild();
+  const ac = a * c, pair = [p * s, q * r];
+  const pairTxt = `${num(pair[0])} and ${num(pair[1])}`;
+  if (Math.random() < .5) return mcq(`To factor ${m(poly([a, b, c]))} by grouping, which pair do you use to split the middle term?`, pairChoices(ac, b, pair), { answerHTML: pairHTML(pair),
+    explain: [`${m(`<i>a</i> · <i>c</i> = ${a} · ${par(c)} = ${num(ac)}`)}. Need two numbers that multiply to ${num(ac)} and add to ${num(b)} → ${pairTxt}.`, `Split: ${m(polyT([[a, 2], [pair[0], 1], [pair[1], 1], [c, 0]]))}`, `Group and factor: ${m(br(p, q) + br(r, s))}`] });
+  const correct = br(p, q) + br(r, s);
+  const cand = [[p, -q, r, -s], [p, s, r, q], [p, q, r, -s], [p, -q, r, s], [r, q, p, s]];
+  const ch = [{ html: m(correct), ok: true, key: [p * r, b, c].join() }];
+  for (const [P, Q, Rr, S] of cand) {
+    const e = [P * Rr, P * S + Q * Rr, Q * S]; const key = e.join();
+    if (ch.some(x => x.key === key)) continue;
+    ch.push({ html: m(br(P, Q) + br(Rr, S)), ok: false, why: `That expands to ${text(poly(e))}.`, key });
+    if (ch.length >= 4) break;
+  }
+  return mcq(`Which is the factored form of ${m(poly([a, b, c]))}?`, ch, { answerHTML: m(correct),
+    explain: [`${m(`<i>a</i> · <i>c</i> = ${num(ac)}`)}, add to ${num(b)} → ${pairTxt}.`, `Split: ${m(polyT([[a, 2], [pair[0], 1], [pair[1], 1], [c, 0]]))}`, `Group: ${m(correct)}`, "Check by expanding: first × first, outer + inner, last × last."] });
+};
+G.solveAgt1 = () => {
+  const { p, q, r, s, a, b, c } = acBuild();
+  const roots = [rv(-q, p), rv(-s, r)];
+  const pair = [p * s, q * r];
+  const traps = [{ vals: roots.map(x => -rf(x)), msg: "Signs flipped. (2x + 1) = 0 gives x = −1/2." }];
+  if (p > 1 || r > 1) traps.push({ vals: [-q, -s], msg: "Divide by the x-coefficient: (2x + 1) = 0 gives 2x = −1, so x = −1/2." });
+  return { kind: "roots", prompt: `Solve by factoring: ${eqHTML([a, b, c])}`, answer: roots.map(rf), answerHTML: rootsSetHTML(roots), traps, inputHint: ROOTS_HINT,
+    explain: [`${m(`<i>a</i> · <i>c</i> = ${num(a * c)}`)}; add to ${num(b)} → ${num(pair[0])} and ${num(pair[1])}`, `Split and group → ${m(br(p, q) + br(r, s) + " = 0")}`, `${m(`${br(p, q).slice(1, -1)} = 0`)} → ${m(`${X} = ${frac(-q, p)}`)}`, `${m(`${br(r, s).slice(1, -1)} = 0`)} → ${m(`${X} = ${frac(-s, r)}`)}`] };
+};
+G.gcf = () => {
+  let k, r1, r2; do { k = R(2, 5); [r1, r2] = twoRoots(-7, 7, { allowZero: false }); } while (Math.abs(k * r1 * r2) > 90 || r1 === k || r2 === k);
+  const a = k, b = -k * (r1 + r2), c = k * r1 * r2;
+  return { kind: "roots", prompt: `Solve: ${eqHTML([a, b, c])}`, answer: [r1, r2], answerHTML: rootsSetHTML([rv(r1), rv(r2)]), inputHint: ROOTS_HINT,
+    traps: [{ vals: [k, r1, r2], msg: `${k} is a pulled-out common factor. It's never 0, so it's never a root.` }, { vals: [-r1, -r2], msg: "Signs flipped: (x − 3) = 0 gives x = 3." }],
+    explain: [`Every term shares ${k}: ${m(`${k}(${poly([1, -(r1 + r2), r1 * r2])}) = 0`)}`, `Multiply to ${num(r1 * r2)}, add to ${num(-(r1 + r2))} → ${m(`${k}${br(1, -r1)}${br(1, -r2)} = 0`)}`, `${m(`${X} = ${num(r1)}`)} or ${m(`${X} = ${num(r2)}`)}. The ${k} gives no root.`] };
+};
+G.negA = () => {
+  const [r1, r2] = twoRoots(-8, 8, { allowZero: false }); const k = pick([1, 1, 1, 2]);
+  const a = -k, b = k * (r1 + r2), c = -k * r1 * r2;
+  const out = k === 1 ? "−1" : `−${k}`;
+  return { kind: "roots", prompt: `Solve: ${eqHTML([a, b, c])}`, answer: [r1, r2], answerHTML: rootsSetHTML([rv(r1), rv(r2)]), inputHint: ROOTS_HINT,
+    traps: [{ vals: [-r1, -r2], msg: "Signs flipped. After pulling out the negative, every sign inside changes. Then solve each bracket." }],
+    explain: [`a is negative: take out ${out} → ${m(`${k === 1 ? MINUS : MINUS + k}(${poly([1, -(r1 + r2), r1 * r2])}) = 0`)}`, `Multiply to ${num(r1 * r2)}, add to ${num(-(r1 + r2))} → ${m(`${br(1, -r1)}${br(1, -r2)}`)}`, `${m(`${X} = ${num(r1)}`)} or ${m(`${X} = ${num(r2)}`)}`] };
+};
+G.perfectSq = () => {
+  const p = pick([1, 1, 1, 2, 3]), q = RNZ(-7, 7);
+  if (gcd(p, q) !== 1) return G.perfectSq();
+  const a = p * p, b = 2 * p * q, c = q * q;
+  if (Math.random() < .45) return { kind: "num", prompt: `${eqHTML([a, b, c])} has exactly one solution. What is it?`, answer: -q / p, answerHTML: m(`${X} = ${frac(-q, p)}`), inputHint: NUM_HINT,
+    traps: [{ vals: [q / p], msg: "Sign flipped. (x + 3)² = 0 gives x = −3." }, { vals: [-q * q / p], msg: "Take the square root of the last term: you need q, not q²." }],
+    explain: [`First and last terms are squares: ${m(`(${p === 1 ? "" : p}${X})${SQ}`)} and ${m(`${Math.abs(q)}${SQ}`)}. Middle: ${m(`2 · ${p === 1 ? "" : p}${X} · ${Math.abs(q)} = ${Math.abs(b)}${X}`)} ✓`, `So it's ${m(br(p, q) + SQ + " = 0")} → ${m(`${X} = ${frac(-q, p)}`)} (a double root).`] };
+  const real = Math.random() < .5;
+  let B = b, C = c;
+  if (!real) { const t = pick(["b", "c", "neg"]); if (t === "b") B = b + pick([-2, -1, 1, 2]) * (p === 1 ? 1 : p); else if (t === "c") C = c + pick([-1, 1, 2]); else C = -c; }
+  if (!real && B * B - 4 * a * C === 0) return G.perfectSq();
+  const sqForm = m(br(p, q) + SQ);
+  const ch = [{ html: real ? sqForm : m(br(p, q) + SQ), ok: real, why: real ? "" : `Expand it: ${text(poly([a, b, c]))}. That's not the same.`, key: "sq" },
+    { html: m(br(p, -q) + SQ), ok: false, why: "The bracket takes the sign of the middle term.", key: "neg" },
+    { html: m(br(p, q * q) + SQ), ok: false, why: "Use the square root of the last term, not the last term itself.", key: "big" },
+    { html: "Not a perfect square trinomial", ok: !real, why: "First and last are squares, and the middle is 2 × their roots, so it is one.", key: "no" }];
+  return mcq(`Is ${m(poly([a, B, C]))} a perfect square trinomial? If so, which one?`, uniqChoices(ch), { answerHTML: real ? sqForm : "Not a perfect square",
+    explain: real ? [`${m(`${a === 1 ? "" : a}${X}${SQ} = (${p === 1 ? "" : p}${X})${SQ}`)}, ${m(`${c} = ${Math.abs(q)}${SQ}`)}, and ${m(`2 · ${p === 1 ? "" : p}${X} · ${Math.abs(q)} = ${Math.abs(b)}${X}`)} ✓`, `The middle sign is ${b < 0 ? "−" : "+"}, so it's ${sqForm}.`]
+      : [C < 0 ? "The last term is negative, so it can't be a square." : !isSq(C) ? `${C} isn't a perfect square.` : `The middle term should be ${m(`2 · ${p === 1 ? "" : p}${X} · ${Math.sqrt(C)} = ${2 * p * Math.sqrt(C)}${X}`)}, but it's ${m(Math.abs(B) + X)}.`, "So it's not a perfect square trinomial."] });
+};
+
+/* ---- Formula & other heights ---- */
+function formulaPick() {
+  for (;;) { const a = pick([1, 1, 2, 3]), b = RNZ(-8, 8), c = RNZ(-9, 9), D = b * b - 4 * a * c; if (D > 0 && !isSq(D) && D <= 200) return { a, b, c, D }; }
+}
+const formulaWork = (a, b, c) => { const D = b * b - 4 * a * c; return m(`${X} = <span class="frac"><span>${num(-b)} ± √<span class="rad">${D}</span></span><span>${2 * a}</span></span>`); };
+G.formulaRoots = () => {
+  const { a, b, c, D } = formulaPick();
+  const right = radForm(-b, D, 2 * a);
+  const ch = [{ html: right.html, ok: true, key: right.key }];
+  const add = (f, why) => { if (!ch.some(x => x.key === f.key) && ch.length < 4) ch.push({ html: f.html, ok: false, why, key: f.key }); };
+  add(radForm(b, D, 2 * a), "The formula starts with −b: flip b's sign.");
+  add(radForm(-b, D, a), "Divide by 2a, not a.");
+  const D2 = b * b + 4 * a * c; if (D2 > 0) add(radForm(-b, D2, 2 * a), "Sign slip in b² − 4ac. Multiply −4 · a · c with all the signs.");
+  add(radForm(-b, D, 4 * a), "Divide by 2a once.");
+  const [s, rr] = sqrtSplit(D);
+  return mcq(`Solve with the quadratic formula: ${eqHTML([a, b, c])}`, ch, { answerHTML: right.html,
+    explain: [`${m(`<i>a</i> = ${a}, <i>b</i> = ${num(b)}, <i>c</i> = ${num(c)}`)}; discriminant ${discWork(a, b, c)}`, formulaWork(a, b, c), s > 1 ? `${m(`√${D} = √(${s * s} · ${rr}) = ${s}√${rr}`)}, then cancel common factors.` : `${D} has no square factor to pull out.`, right.html] });
+};
+G.otherHeight = () => {
+  const [r1, r2] = twoRoots(-6, 6, { allowZero: true }); const k = RNZ(-8, 8);
+  const b = -(r1 + r2), c = r1 * r2 + k;
+  const traps = [{ vals: [-r1, -r2], msg: "Signs flipped when solving the brackets." }];
+  const Dw = b * b - 4 * (c + k); if (Dw >= 0) { const s = Math.sqrt(Dw); traps.push({ vals: [(-b - s) / 2, (-b + s) / 2], msg: `Move ${k} the other way: subtract it from both sides, so c becomes ${c} − ${par(k)}.` }); }
+  const D0 = b * b - 4 * c; if (D0 >= 0) { const s = Math.sqrt(D0); traps.push({ vals: [(-b - s) / 2, (-b + s) / 2], msg: `Those are where it meets y = 0. Subtract ${k} first.` }); }
+  return { kind: "roots", prompt: `Where does ${m(`<i>y</i> = ${poly([1, b, c])}`)} meet the line ${m(`<i>y</i> = ${num(k)}`)}? Give the x-values.`, answer: [r1, r2], answerHTML: rootsSetHTML([rv(r1), rv(r2)]), inputHint: ROOTS_HINT, traps,
+    graph: graphSVG(1, b, c, { line: k }),
+    explain: [`Set them equal: ${m(`${poly([1, b, c])} = ${num(k)}`)}`, `Move ${num(k)} to the left: ${eqHTML([1, b, c - k])}`, `Factor: ${m(`${br(1, -r1)}${br(1, -r2)} = 0`)} → ${rootsSetHTML([rv(r1), rv(r2)])}`] };
+};
+G.chooseSolve = () => {
+  const kind = pick(["fac", "irr", "none"]); let a, b, c;
+  if (kind === "fac") ({ a, b, c } = Math.random() < .5 ? acBuild() : (() => { const [r1, r2] = twoRoots(-9, 9); return { a: 1, b: -(r1 + r2), c: r1 * r2 }; })());
+  else if (kind === "irr") ({ a, b, c } = formulaPick());
+  else { do { a = pick([1, 2, 3]); b = RNZ(-6, 6); c = RNZ(1, 9); } while (b * b - 4 * a * c >= 0); }
+  const D = b * b - 4 * a * c; const info = rootsInfo(a, b, c);
+  const ch = [];
+  if (kind === "fac") {
+    const roots = info.factor.roots; ch.push({ html: rootsSetHTML(roots), ok: true });
+    ch.push({ html: rootsSetHTML(roots.map(r => [-r[0], r[1]])), ok: false, why: "Signs flipped." });
+    ch.push({ html: "No real solutions", ok: false, why: `The discriminant is ${D}, which is positive.` });
+    const wrong = radForm(-b, b * b + 4 * a * c > 0 ? b * b + 4 * a * c : D + 8, 2 * a); ch.push({ html: wrong.html, ok: false, why: "Sign slip inside b² − 4ac." });
+  } else if (kind === "irr") {
+    const r = radForm(-b, D, 2 * a); ch.push({ html: r.html, ok: true, key: r.key });
+    const w = radForm(b, D, 2 * a); if (w.key !== r.key) ch.push({ html: w.html, ok: false, why: "The formula starts with −b." });
+    ch.push({ html: "No real solutions", ok: false, why: `The discriminant is ${D}, which is positive.` });
+    const w2 = radForm(-b, D, a); if (w2.key !== r.key) ch.push({ html: w2.html, ok: false, why: "Divide by 2a, not a." });
+  } else {
+    ch.push({ html: "No real solutions", ok: true });
+    const w = radForm(-b, -D, 2 * a); ch.push({ html: w.html, ok: false, why: `The discriminant is ${D}. You can't take √ of a negative and drop the sign.` });
+    const w2 = radForm(b, -D, 2 * a); if (w2.key !== w.key) ch.push({ html: w2.html, ok: false, why: `The discriminant is negative (${D}), so there are no real solutions.` });
+  }
+  return mcq(`Find all real solutions of ${eqHTML([a, b, c])}.`, uniqChoices(ch), { answerHTML: kind === "none" ? "No real solutions" : info.html,
+    explain: [`Discriminant first: ${discWork(a, b, c)}.`, D < 0 ? "Negative → no real solutions. Done." : isSq(D) ? `Perfect square → factor: ${m(info.factor.html + " = 0")} → ${info.html}` : `Not a perfect square → formula: ${formulaWork(a, b, c)} → ${info.html}`] });
+};
+
+/* ---- SAT extras ---- */
+G.diffSquares = () => {
+  const t = pick(["solve", "factor", "factor", "sum"]);
+  let p, n; do { p = pick([1, 1, 2, 3, 4, 5]); n = R(1, 12); } while (gcd(p, n) !== 1 || (p === 1 && n === 1));
+  const a = p * p, c = n * n;
+  if (t === "solve") return { kind: "roots", prompt: `Solve: ${eqHTML([a, 0, -c])}`, answer: [n / p, -n / p], answerHTML: rootsSetHTML([rv(n, p), rv(-n, p)]), inputHint: ROOTS_HINT,
+    traps: [{ vals: [n / p], msg: "Don't forget the negative root: (−x)² is the same as x²." }, { vals: [c / a], msg: "Take the square root at the end." }],
+    explain: [`Difference of squares: ${m(`(${p === 1 ? "" : p}${X})${SQ} − ${n}${SQ} = ${br(p, -n)}${br(p, n)}`)}`, `→ ${rootsSetHTML([rv(n, p), rv(-n, p)])}`] };
+  if (t === "sum") return mcq(`Factor ${m(poly([a, 0, c]))} using real numbers.`, [
+    { html: "It doesn't factor. It has no real roots.", ok: true },
+    { html: m(br(p, -n) + br(p, n)), ok: false, why: `That expands to ${text(poly([a, 0, -c]))}: a difference, not a sum.` },
+    { html: m(br(p, n) + SQ), ok: false, why: `That expands to ${text(poly([a, 2 * p * n, c]))}: it has a middle term.` }], { answerHTML: "Doesn't factor",
+    explain: ["A sum of two squares is always positive, so it never equals 0 and has no real roots.", `Discriminant: ${m(`0 − 4(${a})(${c}) = ${-4 * a * c}`)} &lt; 0.`] });
+  return mcq(`Factor ${m(poly([a, 0, -c]))}.`, [
+    { html: m(br(p, -n) + br(p, n)), ok: true },
+    { html: m(br(p, -n) + SQ), ok: false, why: `That expands to ${text(poly([a, -2 * p * n, c]))}.` },
+    { html: m(br(p, n) + SQ), ok: false, why: `That expands to ${text(poly([a, 2 * p * n, c]))}.` },
+    { html: "It doesn't factor", ok: false, why: "A difference of two squares always factors." }], { answerHTML: m(br(p, -n) + br(p, n)),
+    explain: [`${m(`${a === 1 ? "" : a}${X}${SQ} = (${p === 1 ? "" : p}${X})${SQ}`)} and ${m(`${c} = ${n}${SQ}`)}`, `${m(`<i>A</i>${SQ} − <i>B</i>${SQ} = (<i>A</i> − <i>B</i>)(<i>A</i> + <i>B</i>)`)} → ${m(br(p, -n) + br(p, n))}`] });
+};
+G.sumProduct = () => {
+  let a, b, c; do { a = R(1, 5); b = RNZ(-12, 12); c = RNZ(-12, 12); } while (b * b - 4 * a * c <= 0);
+  const askSum = Math.random() < .5;
+  const ans = askSum ? -b / a : c / a;
+  return { kind: "num", prompt: `What is the ${askSum ? "sum" : "product"} of the solutions of ${eqHTML([a, b, c])}?`, answer: ans, answerHTML: m(askSum ? frac(-b, a) : frac(c, a)), inputHint: NUM_HINT,
+    traps: askSum ? [{ vals: [b / a], msg: "The sum is −b ⁄ a. Keep the minus." }, { vals: [c / a], msg: "That's the product (c ⁄ a). The sum is −b ⁄ a." }] : [{ vals: [-c / a], msg: "The product is c ⁄ a, with no minus." }, { vals: [-b / a], msg: "That's the sum (−b ⁄ a). The product is c ⁄ a." }],
+    explain: [`For ${m("<i>ax</i>" + SQ + " + <i>bx</i> + <i>c</i> = 0")}: sum of roots ${m("= −<i>b</i> ⁄ <i>a</i>")}, product ${m("= <i>c</i> ⁄ <i>a</i>")}.`, askSum ? m(`−${par(b)} ⁄ ${a} = ${frac(-b, a)}`) : m(`${num(c)} ⁄ ${a} = ${frac(c, a)}`), "No need to find the roots themselves."] };
+};
+G.vertexForm = () => {
+  const h = RNZ(-6, 6), k = R(-9, 9), b = -2 * h, c = h * h + k;
+  const vf = (H, K) => m(`<i>y</i> = ${br(1, -H)}${SQ}${K === 0 ? "" : (K < 0 ? " − " : " + ") + Math.abs(K)}`);
+  const ch = [{ html: vf(h, k), ok: true, key: `${h},${k}` }];
+  const add = (H, K, why) => { const key = `${H},${K}`; if (!ch.some(x => x.key === key)) ch.push({ html: vf(H, K), ok: false, why, key }); };
+  add(-h, k, "Sign slip: half of b is " + num(-h) + ", so the bracket is (x " + (h > 0 ? "−" : "+") + " " + Math.abs(h) + ").");
+  add(h, c, `You added (b/2)² = ${h * h} but forgot to subtract it.`);
+  add(h, c + h * h, `Subtract (b/2)² = ${h * h}, don't add it.`);
+  return mcq(`Which is ${m(`<i>y</i> = ${poly([1, b, c])}`)} written in vertex form?`, ch.slice(0, 4), { answerHTML: vf(h, k),
+    explain: [`Half of b: ${m(`${num(b)} ⁄ 2 = ${num(-h)}`)}; square it: ${h * h}.`, m(`${poly([1, b, 0]).replace(/ $/, "")} + ${h * h} − ${h * h} ${c < 0 ? "−" : "+"} ${Math.abs(c)} = ${br(1, -h)}${SQ}${k === 0 ? "" : (k < 0 ? " − " : " + ") + Math.abs(k)}`), `Vertex: ${m(`(${num(h)}, ${num(k)})`)}.`] });
+};
+G.unknownK = () => {
+  const t = pick([1, 2, 3, 4]);
+  if (t === 1) { const tt = RNZ(-7, 7), b = 2 * tt; return { kind: "num", prompt: `${m(`${poly([1, b, 0]).trim()} + <i>k</i> = 0`)} has exactly one real solution. What is ${m("<i>k</i>")}?`, answer: tt * tt, answerHTML: m(`<i>k</i> = ${tt * tt}`), inputHint: NUM_HINT,
+    traps: [{ vals: [b * b], msg: "Divide by 4: b² − 4k = 0 gives k = b² ⁄ 4." }, { vals: [-tt * tt], msg: "Check the sign: b² − 4k = 0 → 4k = b²." }],
+    explain: ["Exactly one solution → discriminant = 0.", m(`${par(b)}${SQ} − 4(1)<i>k</i> = 0 → ${b * b} = 4<i>k</i> → <i>k</i> = ${tt * tt}`)] }; }
+  if (t === 2) { const mm = R(2, 9); return { kind: "num", prompt: `${m(`${X}${SQ} + <i>kx</i> + ${mm * mm} = 0`)} has exactly one real solution, and ${m("<i>k</i> &gt; 0")}. What is ${m("<i>k</i>")}?`, answer: 2 * mm, answerHTML: m(`<i>k</i> = ${2 * mm}`), inputHint: NUM_HINT,
+    traps: [{ vals: [mm], msg: "The middle term of a perfect square is 2 × the root: k = 2 · " + mm + "." }, { vals: [4 * mm * mm], msg: "That's k², not k. Take the square root." }],
+    explain: ["One solution → discriminant = 0.", m(`<i>k</i>${SQ} − 4(1)(${mm * mm}) = 0 → <i>k</i>${SQ} = ${4 * mm * mm} → <i>k</i> = ±${2 * mm}`), `k > 0, so ${m(`<i>k</i> = ${2 * mm}`)}. (It's the perfect square ${m(`(${X} + ${mm})${SQ}`)}.)`] }; }
+  const a = R(1, 4), tt = RNZ(-4, 4), b = 2 * a * tt, bound = a * tt * tt;
+  const none = t === 3;
+  return { kind: "num", prompt: `${m(`${poly([a, b, 0]).trim()} + <i>k</i> = 0`)} has ${none ? "<b>no real solutions</b>" : "<b>two distinct real solutions</b>"} exactly when ${m(`<i>k</i> ${none ? "&gt;" : "&lt;"} <i>n</i>`)}. What is ${m("<i>n</i>")}?`, answer: bound, answerHTML: m(`<i>n</i> = ${bound}`), inputHint: NUM_HINT,
+    traps: [{ vals: [b * b], msg: "Divide by 4a: b² − 4ak compares b² with 4ak." }, { vals: [b * b / 4], msg: "Divide by 4a, not just 4." }],
+    explain: [`${none ? "No real solutions → discriminant &lt; 0" : "Two solutions → discriminant &gt; 0"}.`, m(`${b * b} − 4(${a})<i>k</i> ${none ? "&lt;" : "&gt;"} 0 → ${b * b} ${none ? "&lt;" : "&gt;"} ${4 * a}<i>k</i> → <i>k</i> ${none ? "&gt;" : "&lt;"} ${bound}`)] };
+};
+G.lineIntersect = () => {
+  const cs = pick([0, 1, 2]); let b, c, mm, d, B, C;
+  for (;;) {
+    b = R(-6, 6); c = R(-8, 8); mm = R(-4, 4); B = b - mm;
+    if (cs === 1 && B % 2) continue;
+    const T = B * B / 4;
+    C = cs === 1 ? T : cs === 2 ? Math.floor(T) - R(1, 6) : Math.ceil(T) + R(1, 6);
+    if (cs === 0 && C <= T) continue;
+    d = c - C; if (Math.abs(d) <= 12) break;
+  }
+  const line = poly([mm, d]);
+  return mcq(`How many points do ${m(`<i>y</i> = ${poly([1, b, c])}`)} and ${m(`<i>y</i> = ${line}`)} have in common?`, countChoices(cs).map(x => ({ ...x, html: x.html.replace("real roots", "points").replace("real root (a double root)", "point (the line is tangent)") })), {
+    answerHTML: String(cs), explain: [`Set equal: ${m(`${poly([1, b, c])} = ${line}`)}`, `Move everything left: ${eqHTML([1, B, C])}`, `Discriminant: ${discWork(1, B, C)} → ${["no intersections", "1 point (tangent)", "2 points"][cs]}.`] });
+};
+
+/* ================= skills registry ================= */
+const TOPICS = [
+  { id: "graph", name: "Parabola & graph" },
+  { id: "disc", name: "Discriminant & root count" },
+  { id: "factor", name: "Factoring" },
+  { id: "formula", name: "Formula & choosing a method" },
+  { id: "sat", name: "SAT extras", extra: true }];
+const SKILLS = [
+  { id: "open", topic: "graph", level: 1, name: "Which way it opens", rule: "a > 0 opens up ∪, a < 0 opens down ∩. a is the x² coefficient, wherever it sits." },
+  { id: "vertexX", topic: "graph", level: 1, name: "Vertex x = −b/2a", rule: "Vertex x = −b ⁄ 2a. Keep the minus; divide by 2a." },
+  { id: "readGraph", topic: "graph", level: 1, name: "Reading a graph", rule: "Roots are where the curve meets the x-axis. Up ∪ → a > 0. Crossings tell you the sign of b² − 4ac." },
+  { id: "vertexY", topic: "graph", level: 2, name: "Minimum / maximum value", rule: "Find vertex x = −b ⁄ 2a, then plug it in. Opens up → minimum; opens down → maximum." },
+  { id: "vertexPos", topic: "graph", level: 2, name: "Vertex position → root count", rule: "∪: vertex below/on/above axis → 2/1/0. ∩: above/on/below → 2/1/0." },
+  { id: "discCalc", topic: "disc", level: 1, name: "Computing b² − 4ac", rule: "b² − 4ac. Square negatives in brackets: (−3)² = 9. Multiply −4·a·c with all signs." },
+  { id: "discCount", topic: "disc", level: 1, name: "Root count from the discriminant", rule: "b² − 4ac: positive → 2, zero → 1 (double), negative → 0 real roots." },
+  { id: "discWhy", topic: "disc", level: 1, name: "Why the discriminant works", rule: "It sits under √ in the formula: ±√(positive) gives 2 answers, ±√0 gives 1, √(negative) isn't real." },
+  { id: "oppSigns", topic: "disc", level: 2, name: "Opposite-signs shortcut", rule: "a and c with opposite signs → −4ac > 0 → always 2 roots. Same signs → must compute." },
+  { id: "factorable", topic: "disc", level: 2, name: "Will it factor?", rule: "b² − 4ac a perfect square → factors with whole numbers. Positive but not square → formula. Negative → no real roots." },
+  { id: "zeroProduct", topic: "factor", level: 1, name: "Zero product property", rule: "A·B = 0 → A = 0 or B = 0. Only works when the product is 0. Numbers in front are never roots." },
+  { id: "pairA1", topic: "factor", level: 1, name: "Finding the pair (a = 1)", rule: "Two numbers that multiply to c and add to b." },
+  { id: "signs", topic: "factor", level: 1, name: "Sign rules for the pair", rule: "c + → both take b's sign. c − → opposite signs; the bigger takes b's sign." },
+  { id: "solveA1", topic: "factor", level: 1, name: "Solving by factoring (a = 1)", rule: "Pair → (x + m)(x + n) = 0 → x = −m, x = −n. The sign flips." },
+  { id: "signFlip", topic: "factor", level: 1, name: "Roots from brackets", rule: "(x + m) = 0 → x = −m. (px + q) = 0 → x = −q ⁄ p." },
+  { id: "acMethod", topic: "factor", level: 2, name: "a·c method (a > 1)", rule: "Pair multiplies to a·c and adds to b. Split the middle, group, pull out the common bracket." },
+  { id: "solveAgt1", topic: "factor", level: 2, name: "Solving with a > 1", rule: "Factor with the a·c method, then solve (px + q) = 0 → x = −q ⁄ p. Fractions are normal." },
+  { id: "gcf", topic: "factor", level: 2, name: "Pull out the GCF first", rule: "Take out a common factor first. It's never 0, so it's never a root." },
+  { id: "negA", topic: "factor", level: 2, name: "Negative a", rule: "Factor out −1 first; every sign inside flips. Then factor as usual." },
+  { id: "perfectSq", topic: "factor", level: 2, name: "Perfect square trinomials", rule: "Ends are squares, middle = 2 × their roots, last term positive → (x ± p)², one double root." },
+  { id: "otherHeight", topic: "formula", level: 2, name: "Crossing y = k", rule: "ax² + bx + c = k → move k over first (c − k), then solve = 0." },
+  { id: "formulaRoots", topic: "formula", level: 3, name: "Using the quadratic formula", rule: "x = (−b ± √(b² − 4ac)) ⁄ 2a. Flip b's sign, divide the whole top by 2a, simplify the root." },
+  { id: "chooseSolve", topic: "formula", level: 3, name: "Choose a method and solve", rule: "Discriminant first: negative → none; perfect square → factor; otherwise → formula." },
+  { id: "diffSquares", topic: "sat", level: 1, name: "Difference of squares", rule: "A² − B² = (A − B)(A + B). A sum of squares doesn't factor." },
+  { id: "sumProduct", topic: "sat", level: 2, name: "Sum & product of roots", rule: "Sum = −b ⁄ a, product = c ⁄ a. No need to solve." },
+  { id: "vertexForm", topic: "sat", level: 2, name: "Vertex form (complete the square)", rule: "Halve b, square it, add and subtract it: x² + bx + c = (x + b/2)² + (c − b²/4). Vertex (h, k)." },
+  { id: "unknownK", topic: "sat", level: 3, name: "Solving for an unknown k", rule: "One solution ⇔ D = 0. None ⇔ D < 0. Two ⇔ D > 0. Write D in terms of k and solve." },
+  { id: "lineIntersect", topic: "sat", level: 3, name: "Parabola meets a line", rule: "Set equal, move everything to one side, use the discriminant to count intersections." }];
+const SKILL = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+const TOPIC = Object.fromEntries(TOPICS.map(t => [t.id, t]));
+function generate(id) {
+  for (let i = 0; i < 20; i++) { try { const q = G[id](); q.skill = id; return q; } catch (e) { console.error(id, e); } }
+  throw new Error("generator failed: " + id);
+}
+
+/* ================= storage ================= */
+const KEY = "quadraticsTrainer.v1";
+const blank = () => ({ app: "quadratics-trainer", version: 1, settings: { extras: false, levels: [1, 2, 3], topics: ["graph", "disc", "factor", "formula"], length: 10, smart: true, theme: "light", typeset: false }, skills: {}, log: [] });
+function normalize(d) {
+  const b = blank();
+  if (!d || typeof d !== "object") return b;
+  b.settings = Object.assign(b.settings, d.settings || {});
+  if (d.skills && typeof d.skills === "object") for (const [id, s] of Object.entries(d.skills)) {
+    if (!SKILL[id] || !s) continue;
+    b.skills[id] = { n: +s.n || 0, ok: +s.ok || 0, hist: Array.isArray(s.hist) ? s.hist.map(x => x ? 1 : 0).slice(-20) : [], last: +s.last || 0 };
+  }
+  if (Array.isArray(d.log)) b.log = d.log.filter(e => e && SKILL[e.skill]).slice(0, 500);
+  return b;
+}
+let S = blank();
+try { const raw = localStorage.getItem(KEY); if (raw) S = normalize(JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
+
+function mastery(id) {
+  const s = S.skills[id];
+  if (!s || !s.n) return { key: "new", label: "New", score: 0 };
+  const h = s.hist.slice(-5), acc = h.reduce((x, y) => x + y, 0) / h.length;
+  if (s.n >= 5 && acc >= .8 && h[h.length - 1]) return { key: "mastered", label: "Mastered", score: 1, acc };
+  if (acc >= .8 && s.n >= 3) return { key: "strong", label: "Strong", score: .8, acc };
+  if (acc >= .6) return { key: "getting", label: "Getting there", score: .55, acc };
+  return { key: "learning", label: "Needs work", score: .2 * acc, acc };
+}
+const WEIGHT = { new: 3, learning: 5, getting: 3, strong: 1.4, mastered: .6 };
+
+/* ================= theme & extras ================= */
+function applyTheme() {
+  if (S.settings.theme !== "dark") S.settings.theme = "light";
+  const dark = S.settings.theme === "dark";
+  document.documentElement.setAttribute("data-theme", S.settings.theme);
+  $("#themeBtn").textContent = dark ? "☀ Light mode" : "☾ Dark mode";
+}
+$("#themeBtn").onclick = () => { S.settings.theme = S.settings.theme === "dark" ? "light" : "dark"; save(); applyTheme(); };
+function applyExtras() {
+  $("#extrasToggle").checked = !!S.settings.extras;
+  $$("[data-extra]").forEach(el => el.hidden = !S.settings.extras);
+  buildToc(); renderSetup(); if (currentView === "progress") renderProgress();
+}
+$("#extrasToggle").onchange = e => { S.settings.extras = e.target.checked; save(); applyExtras(); };
+
+/* ================= views ================= */
+let currentView = "start";
+function show(view) {
+  if (!["start", "learn", "cheat", "quiz", "progress"].includes(view)) view = "start";
+  currentView = view;
+  $$("[data-viewpanel]").forEach(p => p.hidden = p.id !== "view-" + view);
+  $$("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.view === view));
+  if (view === "progress") renderProgress();
+  if (view === "quiz" && !session) renderSetup();
+  try { history.replaceState(null, "", "#" + view); } catch (e) { /* ignore */ }
+}
+$$("nav.tabs button, [data-go]").forEach(b => b.onclick = () => { show(b.dataset.view || b.dataset.go); window.scrollTo(0, 0); });
+
+/* ================= learn ================= */
+function buildToc() {
+  $("#toc").innerHTML = $$("section.lesson").filter(s => !s.hidden).map(s => `<a href="#${s.id}" data-jump="${s.id}">${s.dataset.toc}</a>`).join("");
+  $$("#toc a").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" }); });
+}
+$$("[data-graph]").forEach(el => { const [a, b, c] = el.dataset.graph.split(",").map(Number); el.innerHTML = graphSVG(a, b, c, { marks: true, w: 300, h: 210 }); });
+$$("[data-quiz-topic]").forEach(b => b.onclick = () => startQuiz({ topics: [b.dataset.quizTopic] }));
+
+// explorer
+function renderExplorer() {
+  let a = +$("#sa").value; if (a === 0) { a = 1; $("#sa").value = 1; }
+  const b = +$("#sb").value, c = +$("#sc").value;
+  $("#oa").textContent = a; $("#ob").textContent = b; $("#oc").textContent = c;
+  $("#exEq").innerHTML = `<i>y</i> = ${poly([a, b, c])}`;
+  $("#exGraph").innerHTML = graphSVG(a, b, c, { marks: true });
+  const info = rootsInfo(a, b, c), D = info.D;
+  const hx = frac(-b, 2 * a), hyN = 4 * a * c - b * b, hy = frac(hyN, 4 * a);
+  const pill = D > 0 ? `<span class="pill good">positive → 2 roots</span>` : D === 0 ? `<span class="pill mid">zero → 1 double root</span>` : `<span class="pill bad">negative → 0 real roots</span>`;
+  let pairLine = "";
+  if (info.factor && D > 0) {
+    const f = info.factor; const [r1, r2] = f.roots; const k = f.k;
+    const u = -k * r1[1] * r2[0], v = -k * r1[0] * r2[1];
+    pairLine = `<dt>Pair</dt><dd>× to ${m(num(a * c))}, + to ${m(num(b))} → ${m(`${num(u)} and ${num(v)}`)}</dd>`;
+  }
+  $("#exFacts").innerHTML = `
+    <dt>Opens</dt><dd>${a > 0 ? "up ∪ (a &gt; 0)" : "down ∩ (a &lt; 0)"}</dd>
+    <dt>Vertex</dt><dd>${m(`(${hx}, ${hy})`)} · ${a > 0 ? "minimum" : "maximum"}</dd>
+    <dt>b² − 4ac</dt><dd>${m(num(D))} ${pill}${a * c < 0 ? ` <span class="small muted">(a, c opposite signs)</span>` : ""}</dd>
+    ${pairLine}
+    <dt>Factored</dt><dd>${info.factor ? m(info.factor.html) : `<span class="muted">${D < 0 ? "doesn't factor (no real roots)" : "not with whole numbers: use the formula"}</span>`}</dd>
+    <dt>Roots</dt><dd>${D < 0 ? `none real <span class="small muted">(complex: ${info.cplx})</span>` : info.html}</dd>`;
+}
+["sa", "sb", "sc"].forEach(id => $("#" + id).addEventListener("input", renderExplorer));
+$$("[data-preset]").forEach(b => b.onclick = () => { const [a, bb, c] = b.dataset.preset.split(","); $("#sa").value = a; $("#sb").value = bb; $("#sc").value = c; renderExplorer(); });
+$("#exRandom").onclick = () => { $("#sa").value = RNZ(-3, 3); $("#sb").value = R(-8, 8); $("#sc").value = R(-10, 10); renderExplorer(); };
+
+/* ================= quiz setup ================= */
+const availTopics = () => TOPICS.filter(t => !t.extra || S.settings.extras);
+function renderSetup() {
+  const box = $("#topicChecks");
+  box.innerHTML = "<h4>Topics</h4>" + availTopics().map(t => {
+    const sk = SKILLS.filter(s => s.topic === t.id);
+    const mast = sk.filter(s => mastery(s.id).key === "mastered").length;
+    return `<label class="check"><input type="checkbox" data-topic="${t.id}" ${S.settings.topics.includes(t.id) ? "checked" : ""}><span class="grow">${t.name}${t.extra ? '<span class="extra-tag">Beyond notes</span>' : ""}</span><span class="small muted">${mast}/${sk.length}</span></label>`;
+  }).join("");
+  $$("#topicChecks input").forEach(i => i.onchange = () => { const t = i.dataset.topic; S.settings.topics = i.checked ? [...new Set([...S.settings.topics, t])] : S.settings.topics.filter(x => x !== t); save(); updateSetupCount(); });
+  $$("[data-level]").forEach(i => { i.checked = S.settings.levels.includes(+i.dataset.level); i.onchange = () => { const l = +i.dataset.level; S.settings.levels = i.checked ? [...new Set([...S.settings.levels, l])] : S.settings.levels.filter(x => x !== l); save(); updateSetupCount(); }; });
+  $$("#lenSeg button").forEach(b => { b.setAttribute("aria-pressed", +b.dataset.len === S.settings.length); b.onclick = () => { S.settings.length = +b.dataset.len; save(); renderSetup(); }; });
+  $("#smartToggle").checked = S.settings.smart; $("#smartToggle").onchange = e => { S.settings.smart = e.target.checked; save(); };
+  updateSetupCount();
+}
+function eligibleSkills(filter = {}) {
+  if (filter.skills) return filter.skills.filter(id => SKILL[id]);
+  const topics = (filter.topics || S.settings.topics).filter(t => !TOPIC[t].extra || S.settings.extras || (filter.topics && filter.topics.includes(t)));
+  const levels = filter.topics ? [1, 2, 3] : S.settings.levels;
+  return SKILLS.filter(s => topics.includes(s.topic) && levels.includes(s.level)).map(s => s.id);
+}
+function updateSetupCount() {
+  const n = eligibleSkills().length;
+  $("#setupCount").textContent = n ? `${n} question type${n === 1 ? "" : "s"} selected` : "Pick at least one topic and level.";
+  $("#startQuiz").disabled = !n;
+}
+$("#startQuiz").onclick = () => startQuiz({});
+$("#startWeak").onclick = () => {
+  const pool = SKILLS.filter(s => !TOPIC[s.topic].extra || S.settings.extras).map(s => ({ id: s.id, m: mastery(s.id), n: (S.skills[s.id] || {}).n || 0 }));
+  pool.sort((x, y) => (x.m.score - y.m.score) || (y.n - x.n));
+  const tried = pool.filter(p => p.n > 0);
+  const chosen = (tried.length >= 3 ? tried : pool).slice(0, 3).map(p => p.id);
+  startQuiz({ skills: chosen, length: 9, label: "Weakest 3" });
+};
+
+/* ================= quiz run ================= */
+let session = null;
+function startQuiz(filter) {
+  const skills = eligibleSkills(filter);
+  if (!skills.length) { show("quiz"); return; }
+  session = { skills, length: filter.length != null ? filter.length : S.settings.length, i: 0, right: 0, results: [], q: null, answered: false, lastSkill: null, label: filter.label || (filter.topics ? TOPIC[filter.topics[0]].name : filter.skills ? SKILL[filter.skills[0]].name : "Mixed") };
+  show("quiz");
+  $("#quizSetup").hidden = true; $("#quizDone").hidden = true; $("#quizRun").hidden = false;
+  nextQuestion();
+}
+function chooseSkill() {
+  let pool = session.skills;
+  if (pool.length > 1 && session.lastSkill) pool = pool.filter(s => s !== session.lastSkill);
+  if (!S.settings.smart) return pick(pool);
+  const w = pool.map(id => WEIGHT[mastery(id).key]);
+  let r = Math.random() * w.reduce((x, y) => x + y, 0);
+  for (let i = 0; i < pool.length; i++) { r -= w[i]; if (r <= 0) return pool[i]; }
+  return pool[pool.length - 1];
+}
+function nextQuestion() {
+  if (session.length && session.i >= session.length) return finishQuiz();
+  const id = chooseSkill(); session.lastSkill = id;
+  session.q = generate(id); session.answered = false; session.hint = false;
+  renderQuestion();
+}
+function renderQuestion() {
+  const q = session.q, sk = SKILL[q.skill];
+  $("#qCounter").textContent = session.length ? `Question ${session.i + 1} of ${session.length}` : `Question ${session.i + 1}`;
+  $("#qScore").textContent = `${session.right} right · ${session.label}`;
+  $("#qBar").style.width = session.length ? (100 * session.i / session.length) + "%" : "100%";
+  let body = `<div class="skillchip"><span class="lvl l${sk.level}">L${sk.level}</span> ${TOPIC[sk.topic].name} · ${sk.name}${TOPIC[sk.topic].extra ? '<span class="extra-tag">Beyond notes</span>' : ""}</div>
+    <div class="prompt">${q.prompt}</div>${q.graph ? `<div class="qgraph graph">${q.graph}</div>` : ""}`;
+  if (q.kind === "mc") body += `<div class="choices">${q.choices.map((c, i) => `<button class="choice" data-i="${i}"><span class="key">${i + 1}</span><span>${c.html}</span></button>`).join("")}</div>`;
+  else body += `<form class="answer-row" id="ansForm" autocomplete="off"><input id="ansInput" inputmode="text" placeholder="${q.kind === "roots" ? "e.g. 3, -1" : "e.g. 4"}" aria-label="Your answer"><button class="btn" type="submit">Check</button></form><div class="input-hint">${q.inputHint || ""}</div>`;
+  body += `<div id="hintArea"></div><div id="fbArea"></div>
+    <div class="qactions"><div class="row"><button class="btn ghost small" id="hintBtn">Hint</button><button class="btn ghost small" id="idkBtn">I don't know</button></div>
+    <button class="btn" id="nextBtn" hidden>Next <span class="kbd">Enter</span></button></div>`;
+  $("#qCard").innerHTML = body;
+  if (q.kind === "mc") $$(".choice").forEach(b => b.onclick = () => answerMC(+b.dataset.i));
+  else { $("#ansForm").onsubmit = e => { e.preventDefault(); answerInput(); }; setTimeout(() => $("#ansInput") && $("#ansInput").focus({ preventScroll: true }), 30); }
+  $("#hintBtn").onclick = () => { session.hint = true; $("#hintArea").innerHTML = `<div class="hintbox"><b>Rule:</b> ${sk.rule}</div>`; $("#hintBtn").disabled = true; };
+  $("#idkBtn").onclick = () => grade(false, "(skipped)", null);
+  $("#nextBtn").onclick = () => { session.i++; nextQuestion(); };
+}
+function answerMC(i) {
+  if (session.answered) return;
+  const q = session.q, c = q.choices[i];
+  $$(".choice").forEach((b, j) => { b.disabled = true; if (q.choices[j].ok) b.classList.add("right"); });
+  if (!c.ok) $$(".choice")[i].classList.add("wrong");
+  grade(c.ok, text(c.html), c.ok ? null : c.why);
+}
+function parseAnswer(str) {
+  let s = String(str).toLowerCase().replace(/[−–—]/g, "-").replace(/x\s*=/g, " ").replace(/\b(or|and)\b/g, ",").trim();
+  if (!s) return null;
+  if (/^(none|no|no solution|no real|no real solutions?|no roots?|ø|∅)$/.test(s)) return "none";
+  let toks = s.split(/[,;]+/).map(t => t.trim()).filter(Boolean);
+  if (toks.length === 1 && /\s/.test(toks[0]) && !/\/\s|\s\//.test(toks[0])) toks = toks[0].split(/\s+/);
+  const out = [];
+  for (let t of toks) {
+    t = t.replace(/\s+/g, "");
+    let pm = false; if (t.startsWith("±") || t.startsWith("+-")) { pm = true; t = t.replace(/^(±|\+-)/, ""); }
+    const mt = t.match(/^([+-]?\d*\.?\d+)(?:\/([+-]?\d*\.?\d+))?$/);
+    if (!mt) return null;
+    const v = mt[2] ? parseFloat(mt[1]) / parseFloat(mt[2]) : parseFloat(mt[1]);
+    if (!isFinite(v)) return null;
+    out.push(v); if (pm) out.push(-v);
+  }
+  return out;
+}
+function sameSet(given, expected) {
+  const u = arr => { const o = []; arr.forEach(v => { if (!o.some(w => Math.abs(w - v) < 1e-6)) o.push(v); }); return o.sort((a, b) => a - b); };
+  const g = u(given), e = u(expected);
+  return g.length === e.length && g.every((v, i) => Math.abs(v - e[i]) < 1e-6 || Math.abs(v - e[i]) < .006);
+}
+function answerInput() {
+  if (session.answered) return;
+  const q = session.q, raw = $("#ansInput").value, vals = parseAnswer(raw);
+  if (vals === null) { $(".input-hint").innerHTML = `<span style="color:var(--bad)">I couldn't read that.</span> ${q.inputHint}`; return; }
+  let ok = false, trap = null;
+  if (vals !== "none") {
+    if (q.kind === "num") ok = vals.length === 1 && sameSet(vals, [q.answer]);
+    else ok = sameSet(vals, q.answer);
+    if (!ok && q.traps) for (const t of q.traps) if (sameSet(vals, t.vals)) { trap = t.msg; break; }
+    if (!ok && !trap && q.kind === "roots" && vals.length === 1 && q.answer.some(v => Math.abs(v - vals[0]) < 1e-6) && new Set(q.answer).size > 1) trap = "That's one of them. There are two solutions.";
+  } else trap = "There are real solutions here.";
+  $("#ansInput").disabled = true; $$("#ansForm button").forEach(b => b.disabled = true);
+  grade(ok, raw, trap);
+}
+function grade(ok, given, why) {
+  const q = session.q, sk = SKILL[q.skill];
+  session.answered = true; if (ok) session.right++;
+  session.results.push({ skill: q.skill, ok });
+  const s = S.skills[q.skill] || (S.skills[q.skill] = { n: 0, ok: 0, hist: [], last: 0 });
+  s.n++; if (ok) s.ok++; s.hist.push(ok ? 1 : 0); if (s.hist.length > 20) s.hist.shift(); s.last = Date.now();
+  S.log.unshift({ t: Date.now(), skill: q.skill, level: sk.level, q: text(q.prompt), given: String(given), answer: text(q.answerHTML), ok, hint: !!session.hint });
+  if (S.log.length > 500) S.log.length = 500;
+  save();
+  $("#qScore").textContent = `${session.right} right · ${session.label}`;
+  const ms = mastery(q.skill);
+  $("#fbArea").innerHTML = `<div class="feedback ${ok ? "ok" : "no"}" role="status">
+    <h4>${ok ? "Correct" : given === "(skipped)" ? "Here's how it works" : "Not quite"}</h4>
+    ${!ok && why ? `<p class="trap">${why}</p>` : ""}
+    ${!ok ? `<p>Answer: ${q.answerHTML}</p>` : ""}
+    <ol class="steps">${q.explain.map(e => `<li>${e}</li>`).join("")}</ol>
+    <div class="rulebox"><b>Remember:</b> ${sk.rule}<br><span class="small muted">${sk.name}: <span class="mstate ${ms.key}">${ms.label}</span></span></div></div>`;
+  $("#hintBtn").hidden = true; $("#idkBtn").hidden = true;
+  $("#nextBtn").hidden = false; $("#nextBtn").focus({ preventScroll: true });
+  if (session.length && session.i + 1 >= session.length) $("#nextBtn").innerHTML = 'See results <span class="kbd">Enter</span>';
+}
+document.addEventListener("keydown", e => {
+  if (currentView !== "quiz" || !session || $("#quizRun").hidden) return;
+  if (e.target.tagName === "INPUT" && !session.answered) return;
+  if (session.answered && e.key === "Enter") { e.preventDefault(); $("#nextBtn").click(); return; }
+  if (!session.answered && session.q.kind === "mc" && /^[1-9]$/.test(e.key)) { const i = +e.key - 1; if (i < session.q.choices.length) answerMC(i); }
+});
+$("#endQuiz").onclick = () => finishQuiz();
+function finishQuiz() {
+  if (!session) return;
+  const res = session.results, by = {};
+  res.forEach(r => { (by[r.skill] ||= { n: 0, ok: 0 }); by[r.skill].n++; if (r.ok) by[r.skill].ok++; });
+  const pct = res.length ? Math.round(100 * session.right / res.length) : 0;
+  const filterSkills = session.skills;
+  $("#doneBody").innerHTML = `<h2>${res.length ? `${session.right} / ${res.length} right (${pct}%)` : "No questions answered"}</h2>
+    <p class="muted">${session.label}</p>
+    ${res.length ? `<div class="tbl-wrap"><table><tr><th>Skill</th><th>Level</th><th class="num">This quiz</th><th>Mastery now</th></tr>${Object.entries(by).map(([id, v]) => { const ms = mastery(id); return `<tr><td>${SKILL[id].name}</td><td><span class="lvl l${SKILL[id].level}">L${SKILL[id].level}</span></td><td class="num">${v.ok}/${v.n}</td><td><span class="mstate ${ms.key}">${ms.label}</span></td></tr>`; }).join("")}</table></div>` : ""}
+    <div class="row" style="margin-top:14px"><button class="btn" id="againBtn">Same quiz again</button>${res.some(r => !r.ok) ? '<button class="btn ghost" id="missBtn">Drill what I missed</button>' : ""}<button class="btn ghost" id="setupBtn">Change settings</button><button class="btn ghost" id="progBtn">See progress</button></div>`;
+  const missed = [...new Set(res.filter(r => !r.ok).map(r => r.skill))];
+  const prevLen = session.length;
+  session = null;
+  $("#quizRun").hidden = true; $("#quizDone").hidden = false;
+  $("#againBtn").onclick = () => startQuiz({ skills: filterSkills, length: prevLen });
+  if ($("#missBtn")) $("#missBtn").onclick = () => startQuiz({ skills: missed, length: Math.max(5, missed.length * 3), label: "What I missed" });
+  $("#setupBtn").onclick = () => { $("#quizDone").hidden = true; $("#quizSetup").hidden = false; renderSetup(); };
+  $("#progBtn").onclick = () => show("progress");
+}
+
+/* ================= progress ================= */
+function renderProgress() {
+  const vis = SKILLS.filter(s => !TOPIC[s.topic].extra || S.settings.extras);
+  const tries = vis.reduce((x, s) => x + ((S.skills[s.id] || {}).n || 0), 0);
+  const okc = vis.reduce((x, s) => x + ((S.skills[s.id] || {}).ok || 0), 0);
+  const mast = vis.filter(s => mastery(s.id).key === "mastered").length;
+  const weak = vis.filter(s => mastery(s.id).key === "learning").length;
+  const lvlSum = [1, 2, 3].map(l => { const ss = vis.filter(s => s.level === l); const sc = ss.length ? ss.reduce((x, s) => x + mastery(s.id).score, 0) / ss.length : 0; return `L${l} ${Math.round(sc * 100)}%`; }).join(" · ");
+  $("#stats").innerHTML = `
+    <div class="stat"><b>${mast}/${vis.length}</b><span>Skills mastered</span></div>
+    <div class="stat"><b>${tries ? Math.round(100 * okc / tries) : 0}%</b><span>All-time accuracy</span></div>
+    <div class="stat"><b>${tries}</b><span>Questions answered</span></div>
+    <div class="stat"><b>${weak}</b><span>Need work</span></div>
+    <div class="stat"><b style="font-size:1rem;padding:6px 0 3px">${lvlSum}</b><span>Mastery by level</span></div>`;
+  let rows = `<tr><th>Skill</th><th>Level</th><th>Last 5</th><th class="num">Right</th><th>Mastery</th><th></th></tr>`;
+  for (const t of TOPICS) {
+    if (t.extra && !S.settings.extras) continue;
+    const ss = SKILLS.filter(s => s.topic === t.id).sort((x, y) => x.level - y.level);
+    const sc = ss.reduce((x, s) => x + mastery(s.id).score, 0) / ss.length;
+    rows += `<tr class="topic-row"><td colspan="4">${t.name}${t.extra ? '<span class="extra-tag">Beyond notes</span>' : ""}</td><td colspan="2"><div class="bar"><span style="width:${Math.round(sc * 100)}%;background:var(--accent)"></span></div></td></tr>`;
+    for (const s of ss) {
+      const st = S.skills[s.id] || { n: 0, ok: 0, hist: [] }, ms = mastery(s.id);
+      const last = st.hist.slice(-5); const dots = Array.from({ length: 5 }, (_, i) => { const v = last[i - (5 - last.length)]; return `<i class="${v === 1 ? "y" : v === 0 ? "n" : ""}"></i>`; }).join("");
+      rows += `<tr><td>${s.name}<div class="small muted">${s.rule}</div></td><td><span class="lvl l${s.level}">L${s.level}</span></td><td><span class="dots">${dots}</span></td><td class="num">${st.ok}/${st.n}</td><td><span class="mstate ${ms.key}">${ms.label}</span></td><td><button class="btn ghost small" data-practice="${s.id}">Practise</button></td></tr>`;
+    }
+  }
+  $("#skillTable").innerHTML = rows;
+  $$("[data-practice]").forEach(b => b.onclick = () => startQuiz({ skills: [b.dataset.practice], length: 5 }));
+  const miss = S.log.filter(e => !e.ok && (!TOPIC[SKILL[e.skill].topic].extra || S.settings.extras)).slice(0, 15);
+  $("#mistakes").innerHTML = miss.length ? miss.map(e => `<div class="card"><div class="row" style="justify-content:space-between"><span class="skillchip"><span class="lvl l${SKILL[e.skill].level}">L${SKILL[e.skill].level}</span> ${SKILL[e.skill].name} · ${new Date(e.t).toLocaleDateString()}</span><button class="btn ghost small" data-practice="${e.skill}">Try a new one</button></div>
+    <div style="margin-top:4px">${escapeHTML(e.q)}</div><div class="small"><span style="color:var(--bad)">You: ${escapeHTML(e.given)}</span> · <span style="color:var(--good)">Answer: ${escapeHTML(e.answer)}</span></div></div>`).join("")
+    : `<p class="muted">No mistakes logged yet. Wrong answers show up here so you can retry that type.</p>`;
+  $$("#mistakes [data-practice]").forEach(b => b.onclick = () => startQuiz({ skills: [b.dataset.practice], length: 5 }));
+}
+const escapeHTML = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ================= export / import / reset ================= */
+const exportJSON = () => JSON.stringify(Object.assign({}, S, { exportedAt: new Date().toISOString() }), null, 2);
+function msg(el, html, err) { $(el).innerHTML = `<div class="notice${err ? " err" : ""}">${html}</div>`; }
+$("#exportDl").onclick = () => {
+  try {
+    const blob = new Blob([exportJSON()], { type: "application/json" });
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = `quadratics-progress-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+    msg("#exportMsg", "Download started. If nothing was saved, use Copy JSON instead.");
+  } catch (e) { msg("#exportMsg", "This viewer blocked the download. Use Copy JSON instead.", true); }
+};
+$("#exportCopy").onclick = () => {
+  const data = exportJSON();
+  const fallback = () => { msg("#exportMsg", `Copy didn't work here. Select all the text below and copy it:<textarea readonly id="exportArea">${escapeHTML(data)}</textarea>`); const ta = $("#exportArea"); ta.focus(); ta.select(); };
+  try { navigator.clipboard.writeText(data).then(() => msg("#exportMsg", "Copied. Paste it into a text file and save it as .json."), fallback); } catch (e) { fallback(); }
+};
+$("#importFile").onchange = e => { const f = e.target.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { $("#importText").value = rd.result; msg("#importMsg", `Loaded ${escapeHTML(f.name)}. Choose Merge or Replace, then Import.`); }; rd.readAsText(f); };
+$("#importBtn").onclick = () => {
+  let d; try { d = JSON.parse($("#importText").value); } catch (e) { msg("#importMsg", "That isn't valid JSON. Paste the whole exported file, including the outer { }.", true); return; }
+  if (!d || typeof d !== "object" || !d.skills || typeof d.skills !== "object") { msg("#importMsg", "This JSON has no \"skills\" section, so it isn't a Quadratics Trainer export.", true); return; }
+  const inc = normalize(d);
+  const mode = $$("[name=importMode]").find(r => r.checked).value;
+  if (mode === "replace") { inc.settings.theme = S.settings.theme; S = inc; }
+  else {
+    for (const [id, s] of Object.entries(inc.skills)) {
+      const cur = S.skills[id];
+      if (!cur) { S.skills[id] = s; continue; }
+      const newer = s.last > cur.last;
+      cur.n += s.n; cur.ok += s.ok; cur.hist = (newer ? cur.hist.concat(s.hist) : s.hist.concat(cur.hist)).slice(-20); cur.last = Math.max(cur.last, s.last);
+    }
+    const seen = new Set(S.log.map(e => e.t + "|" + e.skill));
+    S.log = S.log.concat(inc.log.filter(e => !seen.has(e.t + "|" + e.skill))).sort((x, y) => y.t - x.t).slice(0, 500);
+  }
+  save(); applyTheme(); applyExtras(); renderProgress();
+  msg("#importMsg", `Imported ${Object.keys(inc.skills).length} skills and ${inc.log.length} logged answers (${mode}).`);
+};
+function bindReset() {
+  $("#resetBtn").onclick = () => {
+    $("#resetArea").innerHTML = `<span class="confirm"><span class="small">Delete all saved results in this browser? This can't be undone. Export first if you want a backup.</span><button class="btn danger small" id="resetYes">Yes, reset</button><button class="btn ghost small" id="resetNo">Cancel</button></span>`;
+    $("#resetYes").onclick = () => { const keep = S.settings; S = blank(); S.settings = keep; save(); restoreReset(); renderProgress(); renderSetup(); };
+    $("#resetNo").onclick = restoreReset;
+  };
+}
+function restoreReset() { $("#resetArea").innerHTML = `<button class="btn danger small" id="resetBtn">Reset all progress</button>`; bindReset(); }
+bindReset();
+
+/* ================= typeset math (optional) ================= */
+// The hand-written HTML math is the only source. When "Typeset math" is on, each .m / .eq is read
+// back into LaTeX from that markup and drawn by KaTeX (loaded from a CDN). Offline, or if any
+// formula fails to convert, the original HTML simply stays.
+const KATEX = "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/";
+const MATH_SEL = ".m, .eq";
+// lone variables in running text (<i>a</i>, <i>bx</i>) too, so they match the typeset formulas
+const isLoneVar = el => el.tagName === "I" && !el.closest(MATH_SEL) && /^[A-Za-z]{1,3}$/.test(el.textContent);
+const ORIG = new WeakMap();
+const SYM = { "−": "-", "±": "\\pm ", "∓": "\\mp ", "≠": "\\neq ", "≤": "\\le ", "≥": "\\ge ", "·": "\\cdot ", "×": "\\times ",
+  "⁄": "/", "…": "\\dots ", "→": "\\to ", "⇒": "\\Rightarrow ", "⇔": "\\Leftrightarrow ", "∪": "\\cup ", "∩": "\\cap ",
+  "√": "\\surd ", "²": "^2", "{": "\\{", "}": "\\}", "%": "\\%", "#": "\\#", "&": "\\&", "_": "\\_", "$": "\\$", "^": "\\wedge ", "\\": "\\backslash " };
+function texText(t, inVar) {
+  let out = "";
+  t = t.replace(/√(\d+)/g, "\u0000$1\u0001"); // a bare √0 → \sqrt{0}
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (ch === "\u0000") { out += "\\sqrt{"; continue; }
+    if (ch === "\u0001") { out += "}"; continue; }
+    if (!inVar && /[A-Za-z]/.test(ch)) { // plain words (e.g. "and") stay upright, keeping their spaces
+      const w = t.slice(i).match(/^[A-Za-z]+(?:\s+[A-Za-z]+)*/)[0];
+      out += `\\text{${/\s$/.test(out) || /\s/.test(t[i - 1] || "") ? " " : ""}${w}${/\s/.test(t[i + w.length] || "") ? " " : ""}}`;
+      i += w.length - 1; continue;
+    }
+    out += /\s/.test(ch) ? " " : (SYM[ch] ?? ch);
+  }
+  return out;
+}
+function toTex(node, inVar = false) {
+  let out = "";
+  for (const c of node.childNodes) {
+    if (c.nodeType === 3) {
+      let t = c.data;
+      if (t.endsWith("√") && c.nextSibling?.classList?.contains("rad")) t = t.slice(0, -1); // .rad draws the sign
+      out += texText(t, inVar);
+    } else if (c.nodeType === 1) {
+      const tag = c.tagName, cl = c.classList;
+      if (tag === "SUP") out += `^{${toTex(c, inVar)}}`;
+      else if (tag === "SUB") out += `_{${toTex(c, inVar)}}`;
+      else if (tag === "I") out += toTex(c, true);
+      else if (tag === "B") out += `\\mathbf{${toTex(c, inVar)}}`;
+      else if (cl.contains("frac")) out += `\\dfrac{${toTex(c.children[0], inVar)}}{${toTex(c.children[1], inVar)}}`;
+      else if (cl.contains("rad")) out += `\\sqrt{${toTex(c, inVar)}}`;
+      else if (tag === "BR") out += " ";
+      else out += toTex(c, inVar);
+    }
+  }
+  return out;
+}
+let katexState = "off"; // off | loading | ready | failed
+function loadKatex() {
+  if (katexState === "ready" || katexState === "loading") return;
+  katexState = "loading"; $("#typesetMsg").textContent = "loading…";
+  const css = document.createElement("link"); css.rel = "stylesheet"; css.href = KATEX + "katex.min.css";
+  const js = document.createElement("script"); js.src = KATEX + "katex.min.js";
+  const fail = () => { if (katexState !== "loading") return; katexState = "failed"; $("#typesetMsg").textContent = "offline – using built-in"; };
+  js.onload = () => { if (!window.katex) return fail(); katexState = "ready"; $("#typesetMsg").textContent = ""; typesetAll(); };
+  js.onerror = fail;
+  setTimeout(fail, 10000);
+  document.head.append(css, js);
+}
+function typesetAll() {
+  if (!S.settings.typeset || katexState !== "ready") return;
+  for (const el of [...$$(MATH_SEL), ...$$("main i").filter(isLoneVar)]) {
+    if (el.dataset.tex) continue;
+    const html = el.innerHTML;
+    el.dataset.tex = "1";
+    try { katex.render(el.tagName === "I" ? toTex(el, true) : toTex(el), el, { throwOnError: true, strict: "ignore" }); ORIG.set(el, html); el.classList.add("tex"); }
+    catch (e) { el.innerHTML = html; console.warn("typeset skipped:", el.textContent, e.message); }
+  }
+}
+function untypesetAll() {
+  for (const el of $$("[data-tex]")) { if (ORIG.has(el)) el.innerHTML = ORIG.get(el); el.classList.remove("tex"); delete el.dataset.tex; }
+}
+let texQueued = false;
+new MutationObserver(() => { // quiz questions, feedback and the explorer redraw their math as they go
+  if (texQueued || !S.settings.typeset) return;
+  texQueued = true; requestAnimationFrame(() => { texQueued = false; typesetAll(); });
+}).observe(document.body, { childList: true, subtree: true });
+function applyTypeset() {
+  $("#typesetToggle").checked = !!S.settings.typeset;
+  if (S.settings.typeset) { loadKatex(); typesetAll(); } else { untypesetAll(); $("#typesetMsg").textContent = ""; }
+}
+$("#typesetToggle").onchange = e => { S.settings.typeset = e.target.checked; save(); applyTypeset(); };
+
+/* ================= boot ================= */
+applyTheme();
+renderExplorer();
+applyExtras();
+applyTypeset();
+show((location.hash || "#start").slice(1));
+</script>
+</body>
+</html>
