@@ -177,6 +177,17 @@ section.lesson:first-of-type { border-top: 0; padding-top: 0; }
 .pill.bad { background: var(--bad-soft); color: var(--bad); }
 .pill.mid { background: var(--accent-soft); color: var(--accent); }
 
+/* Real world */
+.story { max-width: 72ch; }
+.wsl { display: grid; grid-template-columns: 108px 1fr 70px; align-items: center; gap: 10px; }
+.wsl label { font-size: .9rem; color: var(--ink-2); }
+.wsl output { font-family: var(--f-mono); text-align: right; font-variant-numeric: tabular-nums; font-size: .9rem; }
+.wsl input { width: 100%; accent-color: var(--accent); }
+.scene-draw { margin-top: 10px; border-top: 1px dashed var(--rule); padding-top: 8px; }
+.scene .eq { font-size: 1.2rem; }
+.scene .check { display: inline-flex; margin: 0 0 10px; }
+.next-card { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+
 /* Cheat sheet */
 .cheat { columns: 2 300px; column-gap: 16px; }
 .cheat .card { break-inside: avoid; margin-bottom: 16px; padding: 14px 16px; }
@@ -267,6 +278,7 @@ textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border
     <nav class="tabs" role="tablist" aria-label="Views">
       <button role="tab" data-view="start" id="tab-start">Start</button>
       <button role="tab" data-view="learn" id="tab-learn">Learn</button>
+      <button role="tab" data-view="world" id="tab-world">Real world</button>
       <button role="tab" data-view="cheat" id="tab-cheat">Cheat sheet</button>
       <button role="tab" data-view="quiz" id="tab-quiz">Quiz</button>
       <button role="tab" data-view="progress" id="tab-progress">Progress</button>
@@ -285,13 +297,14 @@ textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border
 <div id="view-start" data-viewpanel hidden>
   <div class="hero">
     <h1>Get quadratics down cold.</h1>
-    <p class="lede">A study kit for <span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = 0</span>: what the parabola looks like, how many roots it has, and how to find them, up to SAT level. Learn the rules, then drill them until they stick.</p>
+    <p class="lede">A study kit for <span class="m"><i>ax</i><sup>2</sup> + <i>bx</i> + <i>c</i> = 0</span>: what the parabola looks like, how many roots it has, and how to find them, up to SAT level, plus where they show up in the real world. Learn the rules, then drill them until they stick.</p>
     <div class="row"><button class="btn" data-go="learn">Start learning</button><button class="btn ghost" data-go="quiz">Jump to a quiz</button></div>
   </div>
 
   <h3>How to use it</h3>
   <ol class="flow">
     <li><b data-go="learn">Learn</b><span>Read each section. It opens with the rule to memorize; <i>Show me why</i> has the reasoning, and the explorer lets you drag <i>a</i>, <i>b</i>, <i>c</i> to see the parabola move.</span></li>
+    <li><b data-go="world">Real world</b><span>Thrown balls, break-even prices, stopping distances, the biggest fence pen. Each has a live explorer, and the situation tells you which trick to use.</span></li>
     <li><b data-go="cheat">Cheat sheet</b><span>Every rule on one page. Read it, cover it, say it back.</span></li>
     <li><b data-go="quiz">Quiz</b><span>Practise. Every question is generated fresh, so you can't memorize answers. Wrong answers show the worked steps and the rule.</span></li>
     <li><b data-go="progress">Progress</b><span>See which skills are mastered and which need work, plus your recent mistakes.</span></li>
@@ -320,6 +333,7 @@ textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border
     <li><b>Drill my 3 weakest</b> runs a quick quiz on just your three worst skills.</li>
     <li><b>Length</b>: 5, 10, 20 questions, or Endless.</li>
     <li><b>SAT extras</b> (switch at the top) adds topics beyond your class notes that often show up on the SAT: difference of squares, sum and product of roots, vertex form, parabola meets a line.</li>
+    <li><b>Real-world problems</b> pick a story at random (balls, rockets, fundraisers, fences, handshakes, stopping distances…) and vary its numbers, so you learn to spot the shape, not the answer.</li>
     <li><b>Mastered</b> means at least 5 tries, 4 of the last 5 right, and the most recent one right.</li>
   </ul>
   <p class="small muted">Progress is saved in this browser only. Back it up from the Progress tab.</p>
@@ -510,6 +524,104 @@ textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border
         <p class="small"><span class="m"><i>x</i><sup>2</sup> + 1 = 2<i>x</i></span> → <span class="m"><i>x</i><sup>2</sup> − 2<i>x</i> + 1 = 0</span>, discriminant 0 → the line is tangent: 1 point.</p></div>
     </div>
   </section>
+  <div class="card next-card"><span><b>Next: the real world.</b> Thrown balls, break-even prices, stopping distances, the biggest fence pen: where these rules actually get used.</span><button class="btn small" data-go="world">Real world →</button></div>
+</div>
+
+<!-- ============ REAL WORLD ============ -->
+<div id="view-world" data-viewpanel hidden>
+  <p class="view-intro">The same math, out in the world. A real situation decides the <b>shape</b> of the equation, and the shape decides the <b>trick</b>. Every explorer here is live: drag the sliders and watch the answer change.</p>
+  <div class="toc" id="wtoc"></div>
+
+  <section class="lesson" id="w-map" data-toc="Which trick?">
+    <div class="lesson-head"><h2>Situation → shape → trick</h2><button class="btn ghost small" data-quiz-topic="world">Quiz me on all of it</button></div>
+    <div class="remember"><h4>Remember this</h4>
+      <ul>
+        <li>The <mark>situation</mark> decides the <mark>shape</mark> of the equation, and the shape decides the trick. The subject (physics, money, geometry) doesn't matter.</li>
+        <li>Root count answers <b>“how many times?”</b>: <b>2</b> = passes through twice · <b>1</b> = just touches (at the peak) · <b>0</b> = never gets there.</li>
+        <li>Real answers often <b>reject a root</b>. Negative time, negative people and negative length don't exist.</li>
+        <li>Asking for the <b>most</b> or <b>best</b>? Skip the roots and use the vertex, <span class="m"><i>x</i> = −<span class="frac"><span><i>b</i></span><span>2<i>a</i></span></span></span>.</li>
+      </ul>
+    </div>
+    <div class="tbl-wrap"><table>
+      <tr><th>You see…</th><th>Shape</th><th>Trick</th><th>Explorer</th></tr>
+      <tr><td>“How many times does it reach…?”</td><td>any</td><td><span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span>: 2 / 1 / 0</td><td><a href="#w-times" data-jump="w-times">Thrown ball, break-even</a></td></tr>
+      <tr><td>Something <b>dropped</b> (no push)</td><td class="m"><i>ax</i><sup>2</sup> + <i>c</i> = 0</td><td>isolate <span class="m"><i>x</i><sup>2</sup></span>, then ±√</td><td><a href="#w-short" data-jump="w-short">Dropped rock</a></td></tr>
+      <tr><td>Starts <b>at zero</b> (launched from the ground)</td><td class="m"><i>ax</i><sup>2</sup> + <i>bx</i> = 0</td><td>factor out <i>x</i></td><td><a href="#w-times" data-jump="w-times">Thrown ball: lands</a></td></tr>
+      <tr><td>Counting things, whole-number answer</td><td>small integers</td><td>factor</td><td><a href="#w-count" data-jump="w-count">Handshakes</a></td></tr>
+      <tr><td>Real measured numbers</td><td>messy</td><td>quadratic formula</td><td><a href="#w-messy" data-jump="w-messy">Stopping distance</a></td></tr>
+      <tr><td>“Biggest / best / highest”</td><td>any</td><td>vertex <span class="m">−<i>b</i> ⁄ 2<i>a</i></span></td><td><a href="#w-best" data-jump="w-best">Fence pen</a></td></tr>
+    </table></div>
+    <p class="small muted">Units: heights are in feet, so gravity gives <span class="m">−16<i>t</i><sup>2</sup></span> (that's ½<i>g</i> with <i>g</i> ≈ 32 ft/s²). In meters it would be <span class="m">−4.9<i>t</i><sup>2</sup></span>.</p>
+  </section>
+
+  <section class="lesson" id="w-times" data-toc="How many times?">
+    <div class="lesson-head"><h2>How many times? → count the roots</h2><button class="btn ghost small" data-quiz-skills="wHowMany">Quiz me on this</button></div>
+    <p>Move the target up and one curve gives all three cases. It's the same idea as the <a href="#l-disc" data-jump="l-disc">3 cases</a> in Learn, where changing <i>c</i> slides the curve.</p>
+    <h3>Thrown ball</h3>
+    <p class="story">A ball is thrown straight up at <i>v</i> ft/s. Its height after <i>t</i> seconds is <span class="m"><i>h</i> = −16<i>t</i><sup>2</sup> + <i>vt</i></span>. <b>When is it at height <i>k</i>?</b> Set <span class="m"><i>h</i> = <i>k</i></span> and count the roots. Press <b>Throw</b>: the dot on the left axis is the ball itself, going straight up and down.</p>
+    <div class="scene" data-scene="ball"></div>
+    <h3>Break-even: pricing a fundraiser</h3>
+    <p class="story">At price <i>p</i> you sell <span class="m"><i>N</i> − 10<i>p</i></span> tickets, so revenue is <span class="m"><i>R</i> = <i>p</i>(<i>N</i> − 10<i>p</i>)</span>. The venue costs <i>F</i>. You break even when <span class="m"><i>R</i> = <i>F</i></span>. The green band is every price that makes a profit.</p>
+    <div class="scene" data-scene="biz"></div>
+    <div class="remember"><h4>Same pattern twice</h4><p style="margin:0">A ball and a business, both answered by one number: <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span> tells you <i>before solving</i> whether the target can be reached at all.</p></div>
+  </section>
+
+  <section class="lesson" id="w-short" data-toc="Missing-term shortcuts">
+    <div class="lesson-head"><h2>Missing-term shortcuts</h2><div class="row"><button class="btn ghost small" data-quiz-skills="wDrop">Quiz: b = 0</button><button class="btn ghost small" data-quiz-skills="wLand">Quiz: c = 0</button></div></div>
+    <h3>Dropped rock (<span class="m"><i>b</i> = 0</span>): square-root both sides</h3>
+    <p class="story">A rock is dropped (not thrown) from a bridge <i>H</i> ft above the water: <span class="m"><i>h</i> = <i>H</i> − 16<i>t</i><sup>2</sup></span>. No push means no <span class="m"><i>bt</i></span> term. The faded part of the curve is “before the drop”, which is where the rejected root lives.</p>
+    <div class="scene" data-scene="rock"></div>
+    <p class="small muted">Same shape: a square patio of 81 sq ft → <span class="m"><i>s</i><sup>2</sup> = 81</span> → <i>s</i> = 9 ft. The Pythagorean theorem is the same move: <span class="m"><i>c</i><sup>2</sup> = <i>a</i><sup>2</sup> + <i>b</i><sup>2</sup></span>, then take the root.</p>
+    <h3>Ball lands (<span class="m"><i>c</i> = 0</span>): factor out <i>t</i></h3>
+    <div class="ex-grid">
+      <div class="ex"><h4>When does a ball thrown at 48 ft/s land? <span class="m">−16<i>t</i><sup>2</sup> + 48<i>t</i> = 0</span></h4><ol>
+        <li>It starts at height 0, so there's no constant term.</li>
+        <li>Factor out <i>t</i>: <span class="m"><i>t</i>(−16<i>t</i> + 48) = 0</span></li>
+        <li><span class="m"><i>t</i> = 0</span> or <span class="m"><i>t</i> = 3</span>. Zero is the launch itself; it lands at <b>3 s</b>.</li>
+        <li>Bonus: the peak is halfway between the roots, at 1.5 s. That's the vertex for free.</li></ol>
+        <p class="small muted">Watch it in the <a href="#w-times" data-jump="w-times">thrown-ball explorer</a>: the <b>Lands</b> line updates as you change the speed.</p></div>
+      <div class="ex"><h4>Same shape: revenue <span class="m"><i>p</i>(300 − 10<i>p</i>) = 0</span></h4><ol>
+        <li>Already factored: <span class="m"><i>p</i> = 0</span> or <span class="m">300 − 10<i>p</i> = 0</span>.</li>
+        <li><b>$0 or $30</b>: the two prices that earn nothing.</li>
+        <li>The best price is halfway between them: $15.</li></ol></div>
+    </div>
+  </section>
+
+  <section class="lesson" id="w-count" data-toc="Counting → factor">
+    <div class="lesson-head"><h2>Counting whole things → factor</h2><button class="btn ghost small" data-quiz-skills="wCount">Quiz me on this</button></div>
+    <p class="story">Everyone shakes hands with everyone else once. With <i>n</i> people, each shakes <span class="m"><i>n</i> − 1</span> hands, and each handshake gets counted twice: <span class="m"><span class="frac"><span><i>n</i>(<i>n</i> − 1)</span><span>2</span></span> = <i>H</i></span>. Change the number of people and watch the factoring come out clean every time.</p>
+    <div class="scene" data-scene="hands"></div>
+    <div class="remember"><h4>Honest note</h4><p style="margin:0">Clean factoring shows up mostly when you're <b>counting whole things</b>. Real measurements rarely factor; textbook problems are designed so they do. Other counting stories with the same feel: games in a league where every team plays every other team once (same equation), diagonals of a polygon <span class="m"><span class="frac"><span><i>n</i>(<i>n</i> − 3)</span><span>2</span></span></span>, two consecutive numbers <span class="m"><i>n</i>(<i>n</i> + 1)</span>.</p></div>
+  </section>
+
+  <section class="lesson" id="w-messy" data-toc="Messy → formula">
+    <div class="lesson-head"><h2>Messy numbers → quadratic formula</h2><button class="btn ghost small" data-quiz-skills="wFormula">Quiz me on this</button></div>
+    <p class="story">A driving rule of thumb (it matches the UK Highway Code table): stopping distance is <span class="m"><i>d</i> = <i>v</i> + <span class="frac"><span><i>v</i><sup>2</sup></span><span>20</span></span></span> feet at <i>v</i> mph, which is <i>thinking distance + braking distance</i>. A deer is on the road ahead. What's the fastest you can be going and still stop? Then set your own speed and see whether you make it.</p>
+    <div class="scene" data-scene="stop"></div>
+    <div class="remember"><h4>Insight</h4><p style="margin:0">Braking grows with <span class="m"><i>v</i><sup>2</sup></span>. Double the speed and the braking distance goes up <b>4×</b>.</p></div>
+  </section>
+
+  <section class="lesson" id="w-best" data-toc="Best → vertex">
+    <div class="lesson-head"><h2>What's the best? → the vertex (no roots needed)</h2><button class="btn ghost small" data-quiz-skills="wPeak">Quiz me on this</button></div>
+    <p class="story">You have <i>L</i> ft of fence for a rectangular pen, using a barn wall as one side. That's two sides of depth <i>x</i> and one side of <span class="m"><i>L</i> − 2<i>x</i></span>. Slide <i>x</i> to hunt for the biggest area, then check it against the vertex. Untick the barn to fence all four sides and watch the best pen turn into a square.</p>
+    <div class="scene" data-scene="fence"></div>
+    <p class="small muted">Same idea elsewhere: the ball's highest point and the best ticket price are the vertices of the curves in the <a href="#w-times" data-jump="w-times">first two explorers</a>.</p>
+  </section>
+
+  <section class="lesson" id="w-more" data-toc="Setting it up">
+    <div class="lesson-head"><h2>Setting it up &amp; choosing the trick</h2><div class="row"><button class="btn ghost small" data-quiz-skills="wSetup">Quiz: story → equation</button><button class="btn ghost small" data-quiz-skills="wTrick">Quiz: pick the trick</button><button class="btn ghost small" data-quiz-skills="wReject">Quiz: which root?</button></div></div>
+    <div class="ex-grid">
+      <div class="ex"><h4>Turning a story into an equation</h4><ol>
+        <li>Name the unknown (<i>t</i>, <i>n</i>, <i>p</i>, <i>x</i>) and say what it means.</li>
+        <li>Write every other quantity in terms of it: the long side is <span class="m"><i>L</i> − 2<i>x</i></span>, tickets sold are <span class="m"><i>N</i> − 10<i>p</i></span>.</li>
+        <li>Set the expression equal to the target and move everything to one side.</li>
+        <li>Solve with the trick that fits the shape.</li>
+        <li>Ask whether each root makes sense. Reject negative time, people and length.</li></ol></div>
+      <div class="ex"><h4>Bonus: a quadratic hiding in nature</h4>
+        <p>The <b>golden ratio</b>: cut a line so that whole : long part = long part : short part. That gives <span class="m"><i>x</i><sup>2</sup> = <i>x</i> + 1</span>.</p>
+        <p><span class="m"><i>x</i><sup>2</sup> − <i>x</i> − 1 = 0</span> → formula → <span class="m"><i>x</i> = <span class="frac"><span>1 + √<span class="rad">5</span></span><span>2</span></span> ≈ 1.618</span>. Reject the negative root.</p></div>
+    </div>
+  </section>
 </div>
 
 <!-- ============ CHEAT SHEET ============ -->
@@ -555,6 +667,15 @@ textarea { width: 100%; min-height: 110px; border: 1px solid var(--rule); border
       <li>Complete the square: add &amp; subtract <span class="m">(<i>b</i>/2)<sup>2</sup></span></li>
       <li>“One solution” ⇔ <span class="m"><i>D</i> = 0</span>; “none” ⇔ <span class="m"><i>D</i> &lt; 0</span></li>
       <li>Parabola ∩ line: set equal, move to one side, use <i>D</i></li></ul></div>
+    <div class="card"><h3>Real world: which trick?</h3><ul>
+      <li>“How many times?” → <span class="m"><i>b</i><sup>2</sup> − 4<i>ac</i></span>: 2 / 1 / 0</li>
+      <li>Dropped, no push (<span class="m"><i>b</i> = 0</span>) → isolate the square, ±√</li>
+      <li>Starts at zero (<span class="m"><i>c</i> = 0</span>) → factor out <i>x</i>; 0 is the start</li>
+      <li>Counting whole things → factor</li>
+      <li>Measured, messy numbers → formula</li>
+      <li>Best / most / highest → vertex <span class="m">−<i>b</i> / 2<i>a</i></span></li>
+      <li>Reject negative time, people, length</li>
+      <li>Height in feet: <span class="m"><i>h</i> = −16<i>t</i><sup>2</sup> + <i>vt</i> + <i>h</i><sub>0</sub></span></li></ul></div>
     <div class="card"><h3>Common traps</h3><ul>
       <li>Reading <i>a</i> from the first term when <span class="m"><i>x</i><sup>2</sup></span> isn't first</li>
       <li>Forgetting the minus in <span class="m">−<i>b</i>/2<i>a</i></span></li>
@@ -1199,12 +1320,305 @@ G.lineIntersect = () => {
     answerHTML: String(cs), explain: [`Set equal: ${m(`${poly([1, b, c])} = ${line}`)}`, `Move everything left: ${eqHTML([1, B, C])}`, `Discriminant: ${discWork(1, B, C)} → ${["no intersections", "1 point (tangent)", "2 points"][cs]}.`] });
 };
 
+/* ---- Real world ---- */
+// Each generator picks a story from a small bank, then draws numbers from a range that keeps the
+// answer clean (or deliberately messy, for the formula questions).
+const TV = "<i>t</i>", NV = "<i>n</i>", PV = "<i>p</i>", HV = "<i>h</i>", VV = "<i>v</i>", WV = "<i>w</i>";
+const fmt = (n, d = 2) => { const r = Math.round(n * 10 ** d) / 10 ** d; return num(r === 0 ? 0 : r); };
+const usd = n => (n < 0 ? MINUS : "") + "$" + fmt(Math.abs(n));
+const fr = (top, bot) => `<span class="frac"><span>${top}</span><span>${bot}</span></span>`;
+const brv = (q, v) => `(${v}${q < 0 ? " − " : " + "}${Math.abs(q)})`;
+const WORLD_HINT = "Enter a number. Units are optional.";
+const TENTH_HINT = "Round to the nearest tenth, e.g. 35.8. Units are optional.";
+// traps that happen to equal the answer (t = 1 → t² = 1) are dropped
+const wnum = (prompt, answer, answerHTML, explain, traps = [], extra = {}) => Object.assign({ kind: "num", prompt, answer, answerHTML, explain, inputHint: WORLD_HINT, units: true,
+  traps: traps.filter(t => !t.vals.every(v => Math.abs(v - answer) < .06)) }, extra);
+const LAUNCH = [
+  { s: "A ball is thrown straight up from the ground", o: "the ball", land: "lands", vs: [32, 40, 48, 56, 64] },
+  { s: "A model rocket is launched straight up from the ground", o: "the rocket", land: "lands", vs: [64, 80, 96, 112, 128] },
+  { s: "An arrow is shot straight up from the ground", o: "the arrow", land: "lands", vs: [64, 80, 96, 112] },
+  { s: "A soccer ball is kicked straight up off the grass", o: "the ball", land: "lands", vs: [24, 32, 40, 48] },
+  { s: "A dolphin leaps straight up out of the water", o: "the dolphin", land: "splashes back down", vs: [16, 24, 32] }];
+const launchTxt = (st, v) => `${st.s} at ${v} ft/s. After ${TV} seconds its height is ${m(`${HV} = ${poly([-16, v, 0], TV)}`)} feet.`;
+const DROP = [
+  { s: H => `A rock is dropped from a bridge ${H} ft above the water.`, ask: "hits the water", ref: "the water", ts: [2, 2.5, 3, 3.5, 4] },
+  { s: H => `A phone slips off a balcony ${H} ft above the ground.`, ask: "hits the ground", ref: "the ground", ts: [1, 1.5, 2, 2.5] },
+  { s: H => `A coin is dropped from the top of a ${H}-ft tower.`, ask: "hits the ground", ref: "the ground", ts: [3, 4, 4.5, 5, 6] },
+  { s: H => `A water balloon is dropped off a roof ${H} ft up.`, ask: "splashes", ref: "the ground", ts: [1, 1.5, 2, 2.5] },
+  { s: H => `An apple falls from a branch ${H} ft up.`, ask: "hits the ground", ref: "the ground", ts: [0.5, 0.75, 1] }];
+// peak price q is always a whole number: sell N − m·p with N = 2·m·q
+const BIZ = [
+  { s: "A school fundraiser", item: "tickets", m: 10, qs: [10, 20], cost: "The venue costs" },
+  { s: "A band", item: "concert tickets", m: 5, qs: [16, 30], cost: "Renting the hall costs" },
+  { s: "A robotics club", item: "T-shirts", m: 4, qs: [8, 15], cost: "The printing setup costs" },
+  { s: "A bake sale", item: "boxes of cookies", m: 20, qs: [3, 8], cost: "Ingredients cost" }];
+const bizPick = () => { const b = pick(BIZ), q = R(b.qs[0], b.qs[1]); return { b, q, N: 2 * b.m * q, top: b.m * q * q }; };
+const bizTxt = (b, N) => `${b.s} sells ${b.item}. At a price of $${PV} it sells ${m(`${N} − ${b.m}${PV}`)} of them, so its revenue is ${m(`<i>R</i> = ${PV}(${N} − ${b.m}${PV})`)} dollars.`;
+
+G.wHowMany = () => {
+  const cs = pick([0, 1, 2]);
+  const why = { 2: "Twice needs b² − 4ac > 0.", 1: "Exactly once needs b² − 4ac = 0: the target is exactly the peak.", 0: "Never needs b² − 4ac < 0." };
+  const verdict = D => D > 0 ? "positive → 2 roots" : D === 0 ? "zero → 1 root" : "negative → 0 roots";
+  if (Math.random() < .55) {
+    const st = pick(LAUNCH), v = pick(st.vs), top = v * v / 64, tp = v / 32;
+    const k = cs === 1 ? top : cs === 2 ? R(Math.ceil(top * .3), top - 1) : top + R(1, Math.max(2, Math.round(top * .4)));
+    const D = v * v - 64 * k;
+    const lab = [`No, ${st.o} never gets that high`, "Yes, exactly once: at the very top", "Yes, twice: once going up, once coming down"];
+    const times = D > 0 ? [(v - Math.sqrt(D)) / 32, (v + Math.sqrt(D)) / 32] : [];
+    return mcq(`${launchTxt(st, v)} Does ${st.o} ever reach ${k} ft?`, [2, 1, 0].map(i => ({ html: lab[i], ok: i === cs, why: why[i] })), { answerHTML: lab[cs],
+      explain: [`Set ${m(`${poly([-16, v, 0], TV)} = ${k}`)}, move ${k} over and multiply by −1: ${m(`${poly([16, -v, k], TV)} = 0`)}.`,
+        `${m("<i>b</i>" + SQ + " − 4<i>ac</i>")} = ${m(`${par(-v)}${SQ} − 4(16)(${k}) = ${v * v} − ${64 * k} = ${num(D)}`)}: ${verdict(D)}.`,
+        cs === 2 ? `It passes ${k} ft at ${m(`${TV} ≈ ${fmt(times[0])}`)} s going up and ${m(`${TV} ≈ ${fmt(times[1])}`)} s coming down.` : `Check: the top is at ${m(`${TV} = ${fmt(tp)}`)} s, height ${fmt(top)} ft.`] });
+  }
+  const { b, q, N, top } = bizPick(), unit = top >= 1000 ? 50 : 10;
+  const F = cs === 1 ? top : cs === 2 ? Math.floor(R(Math.round(top * .55), Math.round(top * .95)) / unit) * unit : Math.ceil(R(Math.round(top * 1.05) + 1, Math.round(top * 1.4)) / unit) * unit;
+  const D = N * N - 4 * b.m * F;
+  const lab = ["None: no price covers the cost", "Exactly one, and no price makes a profit", "Two: any price between them makes a profit"];
+  return mcq(`${bizTxt(b, N)} ${b.cost} $${F}. How many prices exactly break even?`, [2, 1, 0].map(i => ({ html: lab[i], ok: i === cs, why: why[i] })), { answerHTML: lab[cs],
+    explain: [`Break even when revenue = cost: ${m(`${PV}(${N} − ${b.m}${PV}) = ${F}`)} → ${m(`${poly([b.m, -N, F], PV)} = 0`)}.`,
+      `${m("<i>b</i>" + SQ + " − 4<i>ac</i>")} = ${m(`${par(-N)}${SQ} − 4(${b.m})(${F}) = ${N * N} − ${4 * b.m * F} = ${num(D)}`)}: ${verdict(D)}.`,
+      `The most revenue possible is at the vertex, ${m(`${PV} = ${q}`)}: ${usd(top)}.${cs === 0 ? ` That's less than ${usd(F)}.` : ""}`] });
+};
+G.wDrop = () => {
+  const v = pick(["fall", "fall", "mid", "square"]);
+  if (v === "square") {
+    const sq = pick(["A square patio covers", "A square garden bed takes up", "A square rug covers", "A square vegetable plot is"]), s = R(4, 20), A = s * s;
+    return wnum(`${sq} ${A} square feet. How long is each side, in feet?`, s, m(String(s)) + " ft",
+      [`${m(`<i>s</i>${SQ} = ${A}`)}: no middle term, so square-root both sides.`, m(`<i>s</i> = ±√${A} = ±${s}`), `Reject ${m(num(-s))}: a length can't be negative. Each side is ${s} ft.`],
+      [{ vals: [-s], msg: "A length can't be negative. Keep the positive root." }, { vals: [s, -s], msg: "Both solve s² = A, but a negative length doesn't exist. Keep the positive one." },
+        { vals: [A / 4], msg: "Dividing by 4 works for a perimeter. Area is s², so take the square root." }, { vals: [A / 2], msg: "Area is s · s, not 2s. Take the square root." }]);
+  }
+  const st = pick(DROP), t = pick(st.ts), H = 16 * t * t;
+  const before = [t - 0.5, t - 1, t - 1.5].filter(x => x > 0);
+  if (v === "mid" && before.length) {
+    const t1 = pick(before), k = H - 16 * t1 * t1;
+    return wnum(`${st.s(H)} After ${TV} seconds its height is ${m(`${HV} = ${H} − 16${TV}${SQ}`)} feet. After how many seconds is it ${k} ft above ${st.ref}?`, t1, m(fmt(t1)) + " s",
+      [`Set ${m(`${H} − 16${TV}${SQ} = ${k}`)}. No ${m(TV)} term, so isolate ${m(TV + SQ)}.`, m(`16${TV}${SQ} = ${H - k} → ${TV}${SQ} = ${fmt(t1 * t1)} → ${TV} = ±${fmt(t1)}`), `Reject the negative time. It's at ${k} ft after ${fmt(t1)} s.`],
+      [{ vals: [-t1], msg: "Negative time is before the drop. Keep the positive root." }, { vals: [t1, -t1], msg: "Reject the negative root: that moment is before the drop." },
+        { vals: [Math.sqrt(k / 16)], msg: `You solved 16t² = ${k}. Set the height equal to ${k}: ${H} − 16t² = ${k}.` }, { vals: [t1 * t1], msg: "That's t². Take the square root." }]);
+  }
+  return wnum(`${st.s(H)} After ${TV} seconds its height is ${m(`${HV} = ${H} − 16${TV}${SQ}`)} feet. How many seconds until it ${st.ask}?`, t, m(fmt(t)) + " s",
+    [`It ${st.ask} when ${m(`${HV} = 0`)}: ${m(`${H} − 16${TV}${SQ} = 0`)}. There's no ${m(TV)} term (nothing pushed it), so isolate ${m(TV + SQ)}.`, m(`16${TV}${SQ} = ${H} → ${TV}${SQ} = ${fmt(t * t)} → ${TV} = ±${fmt(t)}`), `Reject ${m(`${TV} = ${fmt(-t)}`)}: that's a moment before it was dropped. Answer: ${fmt(t)} s.`],
+    [{ vals: [-t], msg: "Negative time is before the drop. Keep the positive root." }, { vals: [t, -t], msg: "Reject the negative root: that moment is before the drop." },
+      { vals: [t * t], msg: "That's t². Take the square root." }, { vals: [Math.sqrt(H)], msg: "Divide by 16 before taking the square root." }]);
+};
+G.wLand = () => {
+  if (Math.random() < .7) {
+    const st = pick(LAUNCH), v = pick(st.vs), T = v / 16;
+    return wnum(`${launchTxt(st, v)} How many seconds until ${st.o} ${st.land}?`, T, m(fmt(T)) + " s",
+      [`It's back down when ${m(`${HV} = 0`)}: ${m(`${poly([-16, v, 0], TV)} = 0`)}. It starts at height 0, so there's no constant term: factor out ${m(TV)}.`,
+        m(`${TV}(${poly([-16, v], TV)}) = 0 → ${TV} = 0 or ${TV} = ${fr(v, 16)} = ${fmt(T)}`), `${m(`${TV} = 0`)} is the launch itself. It ${st.land} at ${fmt(T)} s.`, `Bonus: the top is halfway, at ${fmt(T / 2)} s.`],
+      [{ vals: [0], msg: "t = 0 is the launch. When c = 0, zero is always one root; the answer is the other one." }, { vals: [0, T], msg: "Both solve the equation, but t = 0 is the launch. The landing is the other root." },
+        { vals: [v], msg: `Divide by 16: −16t + ${v} = 0 gives t = ${v} ⁄ 16.` }, { vals: [T / 2], msg: "That's the top, halfway through the flight. Landing takes twice as long." }]);
+  }
+  const { b, q, N } = bizPick(), P = N / b.m;
+  return wnum(`${bizTxt(b, N)} Revenue is $0 at a price of $0. At what other price does revenue drop to $0?`, P, usd(P),
+    [`Set ${m(`${PV}(${N} − ${b.m}${PV}) = 0`)}. No constant term, and it's already factored.`, `${m(`${PV} = 0`)} or ${m(`${N} − ${b.m}${PV} = 0`)} → ${m(`${PV} = ${fr(N, b.m)} = ${P}`)}.`, `At ${usd(P)} nobody buys. The best price is halfway, at ${usd(q)}.`],
+    [{ vals: [0], msg: "$0 is the other root. The question asks for the second one." }, { vals: [q], msg: "That's the best price, halfway between the roots. Revenue hits $0 at twice that." }, { vals: [N], msg: `Divide by ${b.m}: ${N} − ${b.m}p = 0 gives p = ${N} ⁄ ${b.m}.` }]);
+};
+G.wPeak = () => {
+  const v = pick(["ballH", "ballT", "ballH0", "barn", "four", "price", "rev"]);
+  if (v === "ballH" || v === "ballT") {
+    const st = pick(LAUNCH), vel = pick(st.vs), tp = vel / 32, top = vel * vel / 64;
+    const ex = [`It's a ∩ (a = −16), so the vertex is the highest point. Vertex: ${m(`${TV} = −<i>b</i> ⁄ 2<i>a</i> = −${vel} ⁄ (2 · (−16)) = ${fmt(tp)}`)} s.`,
+      `Plug in: ${m(`−16(${fmt(tp)})${SQ} + ${vel}(${fmt(tp)}) = ${fmt(-16 * tp * tp)} + ${fmt(vel * tp)} = ${fmt(top)}`)} ft.`, `Shortcut: the top is halfway between the roots ${m(`${TV} = 0`)} and ${m(`${TV} = ${fmt(vel / 16)}`)}.`];
+    if (v === "ballT") return wnum(`${launchTxt(st, vel)} After how many seconds is ${st.o} at its highest?`, tp, m(fmt(tp)) + " s", ex.filter((_, i) => i !== 1),
+      [{ vals: [vel / 16], msg: "That's when it comes back down. The top is halfway: −b ⁄ 2a." }, { vals: [-tp], msg: "a = −16 is negative, so −b ⁄ 2a comes out positive. Watch the signs." }, { vals: [top], msg: "That's the height at the top. The question asks when." }]);
+    return wnum(`${launchTxt(st, vel)} How high does ${st.o} go, in feet?`, top, m(fmt(top)) + " ft", ex,
+      [{ vals: [tp], msg: "That's the time of the top. Plug it in to get the height." }, { vals: [vel / 16], msg: "That's the landing time. The top is at −b ⁄ 2a, then plug in." }]);
+  }
+  if (v === "ballH0") {
+    const vel = pick([16, 24, 32, 40, 48, 56, 64]), h0 = pick([4, 5, 6, 8, 10, 20, 30, 40, 50]), tp = vel / 32, top = vel * vel / 64, place = pick(["balcony", "cliff", "rooftop", "platform"]);
+    return wnum(`A ball is thrown straight up at ${vel} ft/s from a ${h0}-ft ${place}. Its height is ${m(`${HV} = ${poly([-16, vel, h0], TV)}`)} feet. What is its greatest height?`, h0 + top, m(fmt(h0 + top)) + " ft",
+      [`Vertex: ${m(`${TV} = −${vel} ⁄ (2 · (−16)) = ${fmt(tp)}`)} s.`, `Plug in: ${m(`−16(${fmt(tp)})${SQ} + ${vel}(${fmt(tp)}) + ${h0} = ${fmt(h0 + top)}`)} ft.`, `It rises ${fmt(top)} ft above the ${place}, which starts ${h0} ft up.`],
+      [{ vals: [top], msg: `That's how far it rises. Add the starting height of ${h0} ft (the c term).` }, { vals: [tp], msg: "That's the time of the top. Plug it in to get the height." }]);
+  }
+  if (v === "barn") {
+    const L = 4 * R(5, 30), st = pick([["A farmer", "pen", "a barn wall"], ["You", "dog run", "the side of the garage"], ["A gardener", "garden", "the back of the house"]]);
+    const ask = pick(["area", "depth", "long"]);
+    const q = { area: "What is the largest area possible, in square feet?", depth: `To get the most area, how far should the ${st[1]} stick out from the wall?`, long: "To get the most area, how long should the side along the wall be?" }[ask];
+    const ans = { area: L * L / 8, depth: L / 4, long: L / 2 }[ask];
+    const traps = { area: [{ vals: [L * L / 16], msg: "That's the answer for fencing all four sides. With the wall you only fence three." }, { vals: [L * L / 9], msg: "Equal sides isn't best here. Use the vertex of x(L − 2x)." }, { vals: [L / 4], msg: "That's the depth x. Plug it in to get the area." }],
+      depth: [{ vals: [L / 3], msg: "Three equal sides isn't best. Use the vertex of x(L − 2x)." }, { vals: [L / 2], msg: "That's the long side, along the wall." }],
+      long: [{ vals: [L / 4], msg: "That's the depth. The long side is L − 2x." }, { vals: [L / 3], msg: "Three equal sides isn't best. Find the vertex first." }] }[ask];
+    return wnum(`${st[0]} ${st[0] === "You" ? "have" : "has"} ${L} ft of fence to build a rectangular ${st[1]} against ${st[2]}, so only three sides need fence. ${q}`, ans, m(fmt(ans)) + (ask === "area" ? " sq ft" : " ft"),
+      [`Let ${m(X)} be each side sticking out. The side along the wall is ${m(`${L} − 2${X}`)}, so ${m(`<i>A</i> = ${X}(${L} − 2${X}) = ${poly([-2, L, 0])}`)}.`, `Vertex: ${m(`${X} = −<i>b</i> ⁄ 2<i>a</i> = −${L} ⁄ (2 · (−2)) = ${L / 4}`)} ft.`, `Best ${st[1]}: ${L / 4} ft × ${L / 2} ft = ${L * L / 8} sq ft. It's twice as long as it is deep, not a square.`], traps);
+  }
+  if (v === "four") {
+    const P = 4 * R(5, 25), s = P / 4;
+    return wnum(`You have ${P} ft of fence to go all the way around a rectangular ${pick(["garden", "play area", "chicken run"])}. What is the largest area you can enclose, in square feet?`, s * s, m(String(s * s)) + " sq ft",
+      [`If one side is ${m(X)}, the other is ${m(`${P / 2} − ${X}`)} (half the fence makes one length plus one width). ${m(`<i>A</i> = ${X}(${P / 2} − ${X}) = ${poly([-1, P / 2, 0])}`)}.`, `Vertex: ${m(`${X} = −${P / 2} ⁄ (2 · (−1)) = ${s}`)}. The other side is also ${s}: a square.`, `${s} × ${s} = ${s * s} sq ft.`],
+      [{ vals: [s], msg: "That's the side length. Area is side × side." }, { vals: [P * P / 8], msg: "That's the barn-wall answer. Here all four sides need fence." }, { vals: [P / 2], msg: "Half the fence is one length plus one width. Find the vertex of x(P/2 − x)." }]);
+  }
+  const { b, q, N, top } = bizPick();
+  if (v === "price") return wnum(`${bizTxt(b, N)} What price brings in the most revenue?`, q, usd(q),
+    [`${m(`<i>R</i> = ${poly([-b.m, N, 0], PV)}`)} is a ∩, so the vertex is the maximum.`, `Vertex: ${m(`${PV} = −${N} ⁄ (2 · (−${b.m})) = ${q}`)}.`, `Revenue there: ${m(`${q}(${N} − ${b.m * q}) = ${top}`)}, so ${usd(top)}.`],
+    [{ vals: [2 * q], msg: "At that price revenue drops to $0. The best price is halfway between the roots." }, { vals: [top], msg: "That's the revenue at the best price. The question asks for the price." }]);
+  return wnum(`${bizTxt(b, N)} What's the most revenue it can bring in, in dollars?`, top, usd(top),
+    [`${m(`<i>R</i> = ${poly([-b.m, N, 0], PV)}`)} is a ∩, so the vertex is the maximum.`, `Vertex: ${m(`${PV} = −${N} ⁄ (2 · (−${b.m})) = ${q}`)}.`, `Plug in: ${m(`${q}(${N} − ${b.m}·${q}) = ${q} · ${N - b.m * q} = ${top}`)}.`],
+    [{ vals: [q], msg: "That's the best price. Plug it in to get the revenue." }, { vals: [N * q], msg: `Sales at that price are ${N} − ${b.m}·${q}, not ${N}.` }]);
+};
+G.wCount = () => {
+  const t = pick(["hand", "league", "cards", "diag", "consec", "rect"]);
+  let prompt, why, lhs, coefs, ans, neg, V = NV, unit;
+  if (t === "hand" || t === "league") {
+    ans = R(5, 16); const H = ans * (ans - 1) / 2; neg = -(ans - 1); coefs = [1, -1, -2 * H];
+    const hand = t === "hand"; unit = hand ? "people" : "teams";
+    prompt = hand ? `At a party, everyone shakes hands with everyone else exactly once. There are ${H} handshakes. How many people are at the party?`
+      : `In a ${pick(["soccer league", "chess tournament", "video game tournament", "pickleball league"])}, every team plays every other team exactly once. That's ${H} games. How many teams are there?`;
+    why = `Each of the ${m(NV)} ${unit} ${hand ? "shakes hands with" : "plays"} ${m(`${NV} − 1`)} others, and that counts every ${hand ? "handshake" : "game"} twice:`;
+    lhs = `${fr(`${NV}(${NV} − 1)`, 2)} = ${H}`;
+  } else if (t === "cards") {
+    ans = R(4, 12); const C = ans * (ans - 1); neg = -(ans - 1); coefs = [1, -1, -C]; unit = "people";
+    prompt = `Everyone in a group sends a holiday card to everyone else. ${C} cards are sent in all. How many people are in the group?`;
+    why = `Each of the ${m(NV)} people sends ${m(`${NV} − 1`)} cards (a card from A to B and one from B to A are different):`; lhs = `${NV}(${NV} − 1) = ${C}`;
+  } else if (t === "diag") {
+    ans = R(5, 14); const Dg = ans * (ans - 3) / 2; neg = -(ans - 3); coefs = [1, -3, -2 * Dg]; unit = "sides";
+    prompt = `A polygon has ${Dg} diagonals (a diagonal joins two corners that aren't next to each other). How many sides does it have?`;
+    why = `From each of ${m(NV)} corners you can draw ${m(`${NV} − 3`)} diagonals (not to itself or its two neighbours), and that counts each one twice:`; lhs = `${fr(`${NV}(${NV} − 3)`, 2)} = ${Dg}`;
+  } else if (t === "consec") {
+    ans = R(6, 25); const P = ans * (ans + 1); neg = -(ans + 1); coefs = [1, 1, -P]; unit = "";
+    prompt = `Two consecutive positive whole numbers multiply to ${P}. What is the smaller one?`;
+    why = `Call the smaller one ${m(NV)}; the next one is ${m(`${NV} + 1`)}:`; lhs = `${NV}(${NV} + 1) = ${P}`;
+  } else {
+    ans = R(3, 12); const k = R(1, 6), A = ans * (ans + k); neg = -(ans + k); coefs = [1, k, -A]; V = WV; unit = "ft";
+    prompt = `A rectangular ${pick(["rug", "poster", "tabletop", "flower bed"])} is ${k} ft longer than it is wide and has an area of ${A} sq ft. How wide is it, in feet?`;
+    why = `Width ${m(WV)}, length ${m(`${WV} + ${k}`)}:`; lhs = `${WV}(${WV} + ${k}) = ${A}`;
+  }
+  const noun = unit === "ft" ? "lengths" : unit || "numbers";
+  return wnum(prompt, ans, m(String(ans)) + (unit ? " " + unit : ""),
+    [`${why} ${m(lhs)}`, `Standard form: ${m(`${poly(coefs, V)} = 0`)}`, `Pair: multiply to ${num(coefs[2])}, add to ${num(coefs[1])} → ${num(-ans)} and ${num(-neg)}`,
+      `${m(`${brv(-ans, V)}${brv(-neg, V)} = 0`)} → ${m(`${V} = ${ans}`)} or ${m(`${V} = ${num(neg)}`)}`, `Reject ${num(neg)}: negative ${noun} don't make sense here. Answer: ${ans}${unit ? " " + unit : ""}.`],
+    [{ vals: [neg], msg: `Negative ${noun} don't make sense here. Keep the positive root.` }, { vals: [ans, neg], msg: "Both solve the equation, but only the positive one makes sense here." }]);
+};
+G.wFormula = () => {
+  const v = pick(["stop", "stop", "cliff", "path"]);
+  let prompt, ans, neg, explain, traps, unit;
+  if (v === "stop") {
+    const D = 5 * R(8, 50), disc = 400 + 80 * D, s = Math.sqrt(disc); ans = (-20 + s) / 2; neg = (-20 - s) / 2; unit = " mph";
+    const ev = pick(["A deer steps onto the road", "A ball rolls into the street", "Traffic stops suddenly", "A fallen branch is blocking the lane"]);
+    prompt = `A driving rule of thumb: at ${VV} mph a car needs ${m(`<i>d</i> = ${VV} + ${fr(VV + SQ, 20)}`)} feet to stop (thinking + braking). ${ev} ${D} ft ahead. What's the fastest you could be going and still stop in time? Round to the nearest tenth.`;
+    explain = [`Set ${m(`${VV} + ${fr(VV + SQ, 20)} = ${D}`)} and multiply by 20: ${m(`${poly([1, 20, -20 * D], VV)} = 0`)}.`,
+      `${m("<i>b</i>" + SQ + " − 4<i>ac</i>")} = ${m(`400 + ${80 * D} = ${disc}`)}${isSq(disc) ? ". That's a perfect square this time, so it would factor too." : ", not a perfect square → formula."}`,
+      m(`${VV} = ${fr(`−20 + √<span class="rad">${disc}</span>`, 2)} ≈ ${fmt(ans, 1)}`) + " mph", `Reject ${m(`${VV} ≈ ${fmt(neg, 1)}`)}: speed can't be negative.`];
+    traps = [{ vals: [neg], msg: "Speed can't be negative. Take the + root." }, { vals: [(20 + s) / 2], msg: "The formula starts with −b, and b = 20 here." }, { vals: [-20 + s], msg: "Divide the whole top by 2a = 2." }];
+  } else if (v === "cliff") {
+    const h0 = R(20, 150), vel = 8 * R(2, 8), disc = vel * vel + 64 * h0, s = Math.sqrt(disc), place = pick(["cliff", "building", "bridge", "lookout tower"]);
+    ans = (vel + s) / 32; neg = (vel - s) / 32; unit = " s";
+    prompt = `A ball is thrown straight up at ${vel} ft/s from the top of a ${h0}-ft ${place}. Its height is ${m(`${HV} = ${poly([-16, vel, h0], TV)}`)} feet. How many seconds until it hits the ground? Round to the nearest tenth.`;
+    explain = [`It hits the ground when ${m(`${HV} = 0`)}: ${m(`${poly([-16, vel, h0], TV)} = 0`)}. Messy numbers → formula.`,
+      `${m("<i>b</i>" + SQ + " − 4<i>ac</i>")} = ${m(`${vel}${SQ} − 4(−16)(${h0}) = ${vel * vel} + ${64 * h0} = ${disc}`)}`,
+      `${m(`${TV} = ${fr(`−${vel} ± √<span class="rad">${disc}</span>`, "−32")}`)} → ${m(`${TV} ≈ ${fmt(ans, 1)}`)} or ${m(`${TV} ≈ ${fmt(neg, 1)}`)}`, `Reject the negative time. It lands after about ${fmt(ans, 1)} s.`];
+    traps = [{ vals: [neg], msg: "Negative time is before the throw. Take the other root." }, { vals: [vel / 16], msg: `That's when it gets back to the top of the ${place}. It still has ${h0} ft to fall.` }, { vals: [(vel + s) / 16], msg: "Divide by 2a = −32." }];
+  } else {
+    const Gl = R(8, 20), Gw = R(4, Math.min(12, Gl)), x0 = R(1, 4) + pick([.3, .4, .6, .7]), A = Math.round((Gl + 2 * x0) * (Gw + 2 * x0));
+    const b = 2 * (Gl + Gw), c = Gl * Gw - A, disc = b * b - 16 * c, s = Math.sqrt(disc); ans = (-b + s) / 8; neg = (-b - s) / 8; unit = " ft";
+    prompt = `A rectangular garden is ${Gl} ft by ${Gw} ft. You'll add a path of the same width ${m(X)} all the way around it, and the garden plus path can cover ${A} sq ft in total. How wide can the path be? Round to the nearest tenth.`;
+    explain = [`With the path, the outside measures ${m(`(${Gl} + 2${X})`)} by ${m(`(${Gw} + 2${X})`)}: ${m(`(${Gl} + 2${X})(${Gw} + 2${X}) = ${A}`)}.`, `Expand and move ${A} over: ${eqHTML([4, b, c])}.`,
+      `${m("<i>b</i>" + SQ + " − 4<i>ac</i>")} = ${m(`${b * b} − 4(4)(${num(c)}) = ${disc}`)}${isSq(disc) ? "" : ", not a perfect square → formula"}.`, m(`${X} = ${fr(`−${b} + √<span class="rad">${disc}</span>`, 8)} ≈ ${fmt(ans, 1)}`) + " ft. Reject the negative root."];
+    traps = [{ vals: [neg], msg: "A width can't be negative. Take the + root." }, { vals: [(-b + s) / 4], msg: "Divide by 2a = 8." }];
+  }
+  return wnum(prompt, ans, m(fmt(ans, 1)) + unit, explain, traps, { tol: .051, inputHint: TENTH_HINT });
+};
+G.wReject = () => {
+  const v = pick(["drop", "people", "rug", "price", "launch"]);
+  let story, vals, keep, V, show, noun, explain;
+  if (v === "drop") { const r1 = pick([0.5, 1, 1.5]), r2 = pick([2, 2.5, 3, 4]); story = "A ball is thrown upward from the edge of a cliff, and you solve for when it hits the ground below."; vals = [-r1, r2]; keep = [r2]; V = TV; show = x => fmt(x) + " s"; noun = "times"; explain = [`Time is counted from the throw, so ${m(`${TV} = ${fmt(-r1)}`)} would be before it was thrown. Reject it.`, `It hits the ground at ${fmt(r2)} s.`]; }
+  else if (v === "people") { const N = R(6, 15); story = "You use the handshake count at a party to solve for how many people came."; vals = [N, -(N - 1)]; keep = [N]; V = NV; show = x => num(x) + " people"; noun = "people"; explain = ["A negative number of people doesn't exist. Reject it.", `${N} people came.`]; }
+  else if (v === "rug") { const Wd = R(3, 12), k = R(1, 6); story = `A rug is ${k} ft longer than it is wide, and you solve for its width.`; vals = [Wd, -(Wd + k)]; keep = [Wd]; V = WV; show = x => num(x) + " ft"; noun = "lengths"; explain = ["A length can't be negative. Reject it.", `The rug is ${Wd} ft wide.`]; }
+  else if (v === "price") { const p1 = R(3, 12), p2 = p1 + R(3, 12); story = "You solve for the ticket prices at which a fundraiser exactly breaks even."; vals = [p1, p2]; keep = [p1, p2]; V = PV; show = usd; noun = "prices"; explain = ["Both are positive prices, and both break even.", `Any price between ${usd(p1)} and ${usd(p2)} makes a profit.`]; }
+  else { const T = pick([1.5, 2, 2.5, 3, 3.5, 4]); story = "A ball is launched from the ground, and you solve h = 0 to find when it lands."; vals = [0, T]; keep = [T]; V = TV; show = x => fmt(x) + " s"; noun = "times"; explain = [`${m(`${TV} = 0`)} solves ${m(`${HV} = 0`)} because the ball starts on the ground: that's the launch.`, `It lands at ${fmt(T)} s.`]; }
+  const [A, B] = shuffle(vals);
+  const onlyWhy = x => v === "price" ? "Both are positive prices, and both break even." : x === 0 ? "t = 0 is the launch, not the landing." : `${show(x)} can't happen: negative ${noun} don't exist.`;
+  const ch = [A, B].map(x => ({ html: `Only ${show(x)}`, ok: keep.length === 1 && keep[0] === x, why: onlyWhy(x) }));
+  ch.push({ html: "Both of them", ok: keep.length === 2, why: v === "launch" ? "Both solve the equation, but the question asks when it lands. t = 0 is the launch." : "Both solve the equation, but one is negative, which can't happen here." });
+  ch.push({ html: "Neither: something went wrong", ok: false, why: "One of them fits the story. Check which one is possible." });
+  return mcq(`${story} The equation gives ${m(`${V} = ${fmt(A)}`)} or ${m(`${V} = ${fmt(B)}`)}. Which answer fits?`, ch, { answerHTML: keep.length === 2 ? "Both" : "Only " + show(keep[0]), explain });
+};
+const TRICK = { sqrt: "Square-root both sides", fx: "Factor out the variable", fac: "Factor: find the pair", form: "Quadratic formula", vert: "Find the vertex, −b ⁄ 2a" };
+const TRICK_WHY = {
+  sqrt: "Square-rooting needs no middle term (b = 0), like something dropped with no push.",
+  fx: "Factoring out the variable needs no constant term (c = 0), like something that starts from zero.",
+  fac: "Finding a pair needs nice whole-number answers. That's mostly counting problems.",
+  form: "The formula always works, but there's a faster trick for this shape.",
+  vert: "The vertex answers “what's the best / highest?”. This question asks when or how many, so you need roots." };
+const TRICK_SHAPE = {
+  sqrt: "Dropped, or a square's area: no middle term, so isolate the square and take ±√.",
+  fx: "Starts from zero: no constant term, so factor out the variable. One root is 0 (the start).",
+  fac: "Counting whole things: the numbers are built to factor.",
+  form: "Measured, messy numbers: b² − 4ac won't be a perfect square, so go straight to the formula.",
+  vert: "“Best / highest / most” is the vertex. No roots needed." };
+G.wTrick = () => {
+  const kind = pick(Object.keys(TRICK)); let story, eqn, solve;
+  if (kind === "sqrt") {
+    if (Math.random() < .5) { const H = R(30, 300); story = `A rock is dropped from a ${H}-ft cliff. How long until it hits the ground?`; eqn = `${H} − 16${TV}${SQ} = 0`; solve = m(`${TV}${SQ} = ${fmt(H / 16)} → ${TV} ≈ ${fmt(Math.sqrt(H / 16))}`) + " s"; }
+    else { const A = R(20, 400); story = `A square patio must cover ${A} sq ft. How long is each side?`; eqn = `<i>s</i>${SQ} = ${A}`; solve = m(`<i>s</i> = √${A} ≈ ${fmt(Math.sqrt(A))}`) + " ft"; }
+  } else if (kind === "fx") {
+    if (Math.random() < .6) { const v = 8 * R(3, 12); story = `A ball is kicked straight up from the ground at ${v} ft/s. When does it land?`; eqn = `${poly([-16, v, 0], TV)} = 0`; solve = m(`${TV}(${poly([-16, v], TV)}) = 0 → ${TV} = ${fmt(v / 16)}`) + " s"; }
+    else { const { b, N } = bizPick(); story = `${b.s} earns ${m(`${PV}(${N} − ${b.m}${PV})`)} dollars at price $${PV}. Besides $0, what price earns nothing?`; eqn = `${poly([-b.m, N, 0], PV)} = 0`; solve = m(`${PV} = ${N / b.m}`); }
+  } else if (kind === "fac") {
+    const n = R(6, 15), H = n * (n - 1) / 2;
+    if (Math.random() < .5) { story = `Everyone at a meeting shakes hands once with everyone else: ${H} handshakes. How many people?`; }
+    else { story = `Every team in a league plays every other team once: ${H} games. How many teams?`; }
+    eqn = `${fr(`${NV}(${NV} − 1)`, 2)} = ${H}`; solve = m(`${poly([1, -1, -2 * H], NV)} = 0 → ${brv(-n, NV)}${brv(n - 1, NV)} = 0 → ${NV} = ${n}`);
+  } else if (kind === "form") {
+    if (Math.random() < .5) { const D = 5 * R(8, 50); story = `Stopping distance is ${m(`${VV} + ${fr(VV + SQ, 20)}`)} ft at ${m(VV)} mph. How fast can you go and still stop within ${D} ft?`; eqn = `${poly([1, 20, -20 * D], VV)} = 0`; solve = m(`${VV} ≈ ${fmt((-20 + Math.sqrt(400 + 80 * D)) / 2, 1)}`) + " mph"; }
+    else { const h0 = R(20, 150), v = 8 * R(2, 8); story = `A ball is thrown up at ${v} ft/s from a ${h0}-ft building. When does it hit the ground?`; eqn = `${poly([-16, v, h0], TV)} = 0`; solve = m(`${TV} ≈ ${fmt((v + Math.sqrt(v * v + 64 * h0)) / 32, 1)}`) + " s"; }
+  } else {
+    const r = Math.random();
+    if (r < .34) { const v = 8 * R(3, 12); story = `A ball is thrown straight up at ${v} ft/s. How high does it go?`; eqn = `${HV} = ${poly([-16, v, 0], TV)}`; solve = m(`${TV} = ${fmt(v / 32)} → ${HV} = ${fmt(v * v / 64)}`) + " ft"; }
+    else if (r < .67) { const L = 4 * R(5, 30); story = `What's the biggest pen you can make with ${L} ft of fence against a barn wall?`; eqn = `<i>A</i> = ${X}(${L} − 2${X})`; solve = m(`${X} = ${L / 4} → <i>A</i> = ${L * L / 8}`) + " sq ft"; }
+    else { const { b, q, N } = bizPick(); story = `${b.s} earns ${m(`${PV}(${N} − ${b.m}${PV})`)} dollars at price $${PV}. Which price earns the most?`; eqn = `<i>R</i> = ${poly([-b.m, N, 0], PV)}`; solve = m(`${PV} = ${q}`); }
+  }
+  const showEq = Math.random() < .5 && !story.includes(eqn);
+  const others = shuffle(Object.keys(TRICK).filter(k => k !== kind)).slice(0, 3);
+  const choices = [kind, ...others].map(k => ({ html: TRICK[k], ok: k === kind, why: k === kind ? "" : kind === "form" && k === "fac" ? "These are measured numbers: b² − 4ac won't be a perfect square, so it won't factor." : TRICK_WHY[k] }));
+  return mcq(`${story}${showEq ? ` <span class="muted">(Equation: ${m(eqn)})</span>` : ""} Which trick is fastest?`, choices, { answerHTML: TRICK[kind], explain: [TRICK_SHAPE[kind], `Here: ${m(eqn)} → ${solve}`] });
+};
+G.wSetup = () => {
+  const v = pick(["fence", "hand", "ball", "biz", "rect"]);
+  let prompt, ok, wrong, explain;
+  if (v === "fence") {
+    const L = 4 * R(6, 30), x0 = R(2, L / 4 - 1), A = x0 * (L - 2 * x0);
+    prompt = `${pick(["A farmer", "A rancher", "A gardener"])} has ${L} ft of fence for a rectangular pen against a barn wall (no fence along the wall). The two sides sticking out are ${m(X)} ft each. Which equation finds ${m(X)} if the pen must cover ${A} sq ft?`;
+    ok = `${X}(${L} − 2${X}) = ${A}`;
+    wrong = [[`${X}(${L} − ${X}) = ${A}`, `The side along the wall uses what's left after both short sides: ${L} − 2x.`], [`2${X} + (${L} − 2${X}) = ${A}`, "That adds up the fence (always L). Area is depth × width."], [`${X}(${L / 2} − ${X}) = ${A}`, "That's for fencing all four sides. The wall saves one side."]];
+    explain = [`Fence: two sides of ${m(X)} plus the long side, so the long side is ${m(`${L} − 2${X}`)}.`, `Area = depth × width = ${m(`${X}(${L} − 2${X})`)}. Set it equal to ${A}.`];
+  } else if (v === "hand") {
+    const n = R(6, 15), H = n * (n - 1) / 2;
+    prompt = `At a party everyone shakes hands with everyone else once, ${H} handshakes in all. Which equation finds the number of people, ${m(NV)}?`;
+    ok = `${fr(`${NV}(${NV} − 1)`, 2)} = ${H}`;
+    wrong = [[`${NV}(${NV} − 1) = ${H}`, "That counts every handshake twice (A with B, and B with A). Divide by 2."], [`${fr(`${NV}${SQ}`, 2)} = ${H}`, "Nobody shakes their own hand: each person shakes n − 1 hands, not n."], [`${fr(`${NV}(${NV} + 1)`, 2)} = ${H}`, "Each person shakes hands with n − 1 others, not n + 1."]];
+    explain = [`Each of ${m(NV)} people shakes ${m(`${NV} − 1`)} hands: ${m(`${NV}(${NV} − 1)`)}.`, "Each handshake involves two people, so that counts it twice. Divide by 2."];
+  } else if (v === "ball") {
+    const st = pick(LAUNCH), vel = pick(st.vs), top = vel * vel / 64, k = R(Math.min(4, top - 1), top - 1);
+    prompt = `${st.s} at ${vel} ft/s. Gravity pulls it down 16${TV}${SQ} ft (in feet, after ${TV} seconds). Which equation finds when it's ${k} ft high?`;
+    ok = `${poly([-16, vel, 0], TV)} = ${k}`;
+    wrong = [[`${poly([16, vel, 0], TV)} = ${k}`, "Gravity pulls down, so the t² term is negative."], [`${poly([-16, k, 0], TV)} = ${vel}`, `The speed multiplies t; the target height ${k} goes on the other side.`], [`${poly([-16, vel, k], TV)} = 0`, `Moving ${k} to the left flips its sign: −${k}, not +${k}.`]];
+    explain = [`Height = speed × time − gravity: ${m(`${HV} = ${poly([-16, vel, 0], TV)}`)}.`, `Set the height equal to ${k}.`];
+  } else if (v === "biz") {
+    const { b, N, top } = bizPick(), F = 10 * Math.round(top * R(50, 95) / 1000);
+    prompt = `${b.s} sells ${b.item}. At a price of $${PV} it sells ${m(`${N} − ${b.m}${PV}`)} of them. ${b.cost} $${F}. Which equation finds the break-even price?`;
+    ok = `${PV}(${N} − ${b.m}${PV}) = ${F}`;
+    wrong = [[`${N} − ${b.m}${PV} = ${F}`, "That's the number sold. Revenue is price × number sold."], [`${PV}(${N} − ${b.m}) = ${F}`, `The number sold is ${N} − ${b.m}·p: the p belongs inside the bracket.`], [`${PV}(${N} − ${b.m}${PV}) + ${F} = 0`, `Break even means revenue = cost. Moving ${F} over gives − ${F}, not + ${F}.`]];
+    explain = ["Revenue = price × number sold.", `Break even: revenue = cost → ${m(`${PV}(${N} − ${b.m}${PV}) = ${F}`)}.`];
+  } else {
+    const k = R(1, 6), Wd = R(3, 12), A = Wd * (Wd + k);
+    prompt = `A rectangle is ${k} ft longer than it is wide and has an area of ${A} sq ft. If ${m(WV)} is the width, which equation fits?`;
+    ok = `${WV}(${WV} + ${k}) = ${A}`;
+    wrong = [[`${WV} + (${WV} + ${k}) = ${A}`, "Area multiplies length × width; it doesn't add them."], [`2${WV} + 2(${WV} + ${k}) = ${A}`, "That's the perimeter, not the area."], [`${WV}(${WV} − ${k}) = ${A}`, `Longer means add: the length is w + ${k}.`]];
+    explain = [`Length = ${m(`${WV} + ${k}`)}.`, `Area = width × length → ${m(`${WV}(${WV} + ${k}) = ${A}`)}.`];
+  }
+  return mcq(prompt, [{ html: m(ok), ok: true }, ...wrong.map(([h, why]) => ({ html: m(h), ok: false, why }))], { answerHTML: m(ok), explain });
+};
+
 /* ================= skills registry ================= */
 const TOPICS = [
   { id: "graph", name: "Parabola & graph" },
   { id: "disc", name: "Discriminant & root count" },
   { id: "factor", name: "Factoring" },
   { id: "formula", name: "Formula & choosing a method" },
+  { id: "world", name: "Real-world problems" },
   { id: "sat", name: "SAT extras", extra: true }];
 const SKILLS = [
   { id: "open", topic: "graph", level: 1, name: "Which way it opens", rule: "a > 0 opens up ∪, a < 0 opens down ∩. a is the x² coefficient, wherever it sits." },
@@ -1230,6 +1644,15 @@ const SKILLS = [
   { id: "otherHeight", topic: "formula", level: 2, name: "Crossing y = k", rule: "ax² + bx + c = k → move k over first (c − k), then solve = 0." },
   { id: "formulaRoots", topic: "formula", level: 3, name: "Using the quadratic formula", rule: "x = (−b ± √(b² − 4ac)) ⁄ 2a. Flip b's sign, divide the whole top by 2a, simplify the root." },
   { id: "chooseSolve", topic: "formula", level: 3, name: "Choose a method and solve", rule: "Discriminant first: negative → none; perfect square → factor; otherwise → formula." },
+  { id: "wReject", topic: "world", level: 1, name: "Keep the root that makes sense", rule: "Negative time, people or length don't exist: reject that root. t = 0 is usually the start, not the answer." },
+  { id: "wDrop", topic: "world", level: 1, name: "Dropped / square area (b = 0)", rule: "No middle term → isolate the square, then ±√. Keep the positive root." },
+  { id: "wLand", topic: "world", level: 1, name: "Starts from zero (c = 0)", rule: "No constant term → factor out the variable. One root is 0 (the start); the other is the answer." },
+  { id: "wHowMany", topic: "world", level: 2, name: "Does it ever reach…? (2 / 1 / 0)", rule: "Set equal, move to one side, check b² − 4ac: positive → twice, zero → once (at the peak), negative → never." },
+  { id: "wSetup", topic: "world", level: 2, name: "Story → equation", rule: "Name the unknown, write every other quantity in terms of it, then set the expression equal to the target." },
+  { id: "wTrick", topic: "world", level: 2, name: "Pick the trick from the situation", rule: "Dropped → √. Starts at zero → factor out x. Counting → factor. Measured data → formula. Best / most → vertex." },
+  { id: "wCount", topic: "world", level: 2, name: "Counting problems → factor", rule: "Write the count, expand to = 0, find the pair, reject the negative root." },
+  { id: "wPeak", topic: "world", level: 2, name: "Best / highest → vertex", rule: "Max or min → vertex x = −b ⁄ 2a, then plug in. No roots needed; the vertex sits halfway between them." },
+  { id: "wFormula", topic: "world", level: 3, name: "Messy numbers → formula", rule: "Measured numbers rarely factor. Standard form, b² − 4ac, formula, round at the end, reject the impossible root." },
   { id: "diffSquares", topic: "sat", level: 1, name: "Difference of squares", rule: "A² − B² = (A − B)(A + B). A sum of squares doesn't factor." },
   { id: "sumProduct", topic: "sat", level: 2, name: "Sum & product of roots", rule: "Sum = −b ⁄ a, product = c ⁄ a. No need to solve." },
   { id: "vertexForm", topic: "sat", level: 2, name: "Vertex form (complete the square)", rule: "Halve b, square it, add and subtract it: x² + bx + c = (x + b/2)² + (c − b²/4). Vertex (h, k)." },
@@ -1244,11 +1667,13 @@ function generate(id) {
 
 /* ================= storage ================= */
 const KEY = "quadraticsTrainer.v1";
-const blank = () => ({ app: "quadratics-trainer", version: 1, settings: { extras: false, levels: [1, 2, 3], topics: ["graph", "disc", "factor", "formula"], length: 10, smart: true, theme: "light", typeset: false }, skills: {}, log: [] });
+const blank = () => ({ app: "quadratics-trainer", version: 1, settings: { extras: false, levels: [1, 2, 3], topics: ["graph", "disc", "factor", "formula", "world"], length: 10, smart: true, theme: "light", typeset: false, worldTopic: true }, skills: {}, log: [] });
 function normalize(d) {
   const b = blank();
   if (!d || typeof d !== "object") return b;
   b.settings = Object.assign(b.settings, d.settings || {});
+  // saves from before the Real world topic existed: switch it on once
+  if (d.settings && !d.settings.worldTopic) { if (!b.settings.topics.includes("world")) b.settings.topics.push("world"); b.settings.worldTopic = true; }
   if (d.skills && typeof d.skills === "object") for (const [id, s] of Object.entries(d.skills)) {
     if (!SKILL[id] || !s) continue;
     b.skills[id] = { n: +s.n || 0, ok: +s.ok || 0, hist: Array.isArray(s.hist) ? s.hist.map(x => x ? 1 : 0).slice(-20) : [], last: +s.last || 0 };
@@ -1289,7 +1714,7 @@ $("#extrasToggle").onchange = e => { S.settings.extras = e.target.checked; save(
 /* ================= views ================= */
 let currentView = "start";
 function show(view) {
-  if (!["start", "learn", "cheat", "quiz", "progress"].includes(view)) view = "start";
+  if (!["start", "learn", "world", "cheat", "quiz", "progress"].includes(view)) view = "start";
   currentView = view;
   $$("[data-viewpanel]").forEach(p => p.hidden = p.id !== "view-" + view);
   $$("nav.tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.view === view));
@@ -1301,11 +1726,21 @@ $$("nav.tabs button, [data-go]").forEach(b => b.onclick = () => { show(b.dataset
 
 /* ================= learn ================= */
 function buildToc() {
-  $("#toc").innerHTML = $$("section.lesson").filter(s => !s.hidden).map(s => `<a href="#${s.id}" data-jump="${s.id}">${s.dataset.toc}</a>`).join("");
-  $$("#toc a").forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump).scrollIntoView({ behavior: "smooth", block: "start" }); });
+  [["#toc", "#view-learn"], ["#wtoc", "#view-world"]].forEach(([toc, view]) => {
+    $(toc).innerHTML = $$(`${view} section.lesson`).filter(s => !s.hidden).map(s => `<a href="#${s.id}" data-jump="${s.id}">${s.dataset.toc}</a>`).join("");
+  });
 }
+// in-page links, including ones that cross from Real world into Learn
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[data-jump]"); if (!a) return;
+  e.preventDefault();
+  const el = document.getElementById(a.dataset.jump); if (!el) return;
+  const panel = el.closest("[data-viewpanel]"); if (panel && panel.hidden) show(panel.id.slice(5));
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 $$("[data-graph]").forEach(el => { const [a, b, c] = el.dataset.graph.split(",").map(Number); el.innerHTML = graphSVG(a, b, c, { marks: true, w: 300, h: 210 }); });
 $$("[data-quiz-topic]").forEach(b => b.onclick = () => startQuiz({ topics: [b.dataset.quizTopic] }));
+$$("[data-quiz-skills]").forEach(b => b.onclick = () => startQuiz({ skills: b.dataset.quizSkills.split(","), length: 5 }));
 
 // explorer
 function renderExplorer() {
@@ -1334,6 +1769,224 @@ function renderExplorer() {
 ["sa", "sb", "sc"].forEach(id => $("#" + id).addEventListener("input", renderExplorer));
 $$("[data-preset]").forEach(b => b.onclick = () => { const [a, bb, c] = b.dataset.preset.split(","); $("#sa").value = a; $("#sb").value = bb; $("#sc").value = c; renderExplorer(); });
 $("#exRandom").onclick = () => { $("#sa").value = RNZ(-3, 3); $("#sb").value = R(-8, 8); $("#sc").value = R(-10, 10); renderExplorer(); };
+
+/* ================= real-world explorers ================= */
+function niceTick(range, target) {
+  const raw = range / target, p = 10 ** Math.floor(Math.log10(raw));
+  for (const k of [1, 2, 2.5, 5, 10]) if (raw <= k * p) return k * p;
+  return 10 * p;
+}
+// A graph with real units. The curve is faded outside `dom` (the part that makes sense in the story),
+// so a rejected root visibly sits on the "impossible" stretch.
+function sceneSVG(o) {
+  const W = o.w || 380, H = o.h || 260, L = 44, Rp = 14, T = 18, B = 30;
+  const [x0, x1] = o.x, [y0, y1] = o.y, f = o.f;
+  const sx = x => L + (x - x0) / (x1 - x0) * (W - L - Rp);
+  const sy = y => H - B - (y - y0) / (y1 - y0) * (H - T - B);
+  const xs = niceTick(x1 - x0, 7), ys = niceTick(y1 - y0, 5);
+  let grid = "", labels = "";
+  for (let i = Math.ceil(x0 / xs - 1e-9); i * xs <= x1 + 1e-9; i++) { const x = i * xs; grid += `<line x1="${sx(x)}" y1="${T}" x2="${sx(x)}" y2="${H - B}"/>`; labels += `<text x="${sx(x)}" y="${H - B + 13}" text-anchor="middle">${fmt(x)}</text>`; }
+  for (let i = Math.ceil(y0 / ys - 1e-9); i * ys <= y1 + 1e-9; i++) { const y = i * ys; grid += `<line x1="${L}" y1="${sy(y)}" x2="${W - Rp}" y2="${sy(y)}"/>`; labels += `<text x="${L - 5}" y="${sy(y) + 3.5}" text-anchor="end">${fmt(y)}</text>`; }
+  const axY = sy(Math.min(Math.max(0, y0), y1)), axX = sx(Math.min(Math.max(0, x0), x1));
+  const N = 220, seg = (a, b) => { let d = ""; for (let i = 0; i <= N; i++) { const x = a + (b - a) * i / N; d += (i ? "L" : "M") + sx(x).toFixed(1) + " " + sy(f(x)).toFixed(1); } return d; };
+  const [d0, d1] = o.dom || o.x, id = "sc" + Math.random().toString(36).slice(2, 8);
+  let body = "";
+  if (o.band) { const { y, a, b } = o.band; let d = `M${sx(a)} ${sy(y)}`; for (let i = 0; i <= N; i++) { const x = a + (b - a) * i / N; d += `L${sx(x).toFixed(1)} ${sy(f(x)).toFixed(1)}`; } body += `<path d="${d}L${sx(b)} ${sy(y)}Z" fill="var(--good)" opacity=".16"/>`; }
+  body += `<path d="${seg(x0, x1)}" fill="none" stroke="var(--curve)" stroke-width="1.6" stroke-dasharray="4 4" opacity=".45"/>`;
+  if (o.discrete) { for (let n = Math.ceil(Math.max(x0, d0)); n <= Math.min(x1, d1); n++) body += `<circle cx="${sx(n)}" cy="${sy(f(n))}" r="2.6" fill="var(--curve)"/>`; }
+  else body += `<path d="${seg(Math.max(x0, d0), Math.min(x1, d1))}" fill="none" stroke="var(--curve)" stroke-width="2.6" stroke-linejoin="round"/>`;
+  if (o.line) body += `<line x1="${L}" x2="${W - Rp}" y1="${sy(o.line.y)}" y2="${sy(o.line.y)}" stroke="var(--line2)" stroke-width="1.8" stroke-dasharray="5 4"/>`;
+  const PT = { good: ["var(--good)", "var(--good)"], bad: ["var(--bad)", "var(--bad)"], root: ["var(--sheet)", "var(--curve)"], reject: ["var(--sheet)", "var(--bad)"], vertex: ["var(--line2)", "var(--line2)"], now: ["var(--accent)", "var(--sheet)"] };
+  const LC = { good: "var(--good)", bad: "var(--bad)", reject: "var(--bad)", vertex: "var(--line2)", now: "var(--accent)", root: "var(--ink)" };
+  const OFF = { above: [0, -10, "middle"], below: [0, 18, "middle"], left: [-9, -7, "end"], right: [9, -7, "start"], "above-left": [-7, -9, "end"], "above-right": [7, -9, "start"], "below-right": [8, 16, "start"] };
+  let marks = "", text = "";
+  if (o.line && o.line.label) text += `<text x="${W - Rp - 3}" y="${sy(o.line.y) - 5}" text-anchor="end" fill="var(--line2)">${o.line.label}</text>`;
+  for (const p of o.pts || []) {
+    if (!isFinite(p.y) || p.x < x0 - 1e-9 || p.x > x1 + 1e-9) continue;
+    const [fill, stroke] = PT[p.t];
+    marks += `<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="${p.t === "now" ? 6 : 4.5}" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+    if (!p.label) continue;
+    let [dx, dy, anchor] = OFF[p.pos || "above"], tx = sx(p.x) + dx;
+    if (anchor === "middle" && tx < L + 30) anchor = "start"; else if (anchor === "middle" && tx > W - Rp - 30) anchor = "end";
+    if (anchor === "end" && tx < L + 60) { anchor = "start"; tx = sx(p.x) + 7; } else if (anchor === "start" && tx > W - Rp - 60) { anchor = "end"; tx = sx(p.x) - 7; }
+    text += `<text x="${tx}" y="${sy(p.y) + dy}" text-anchor="${anchor}" fill="${LC[p.t]}">${p.label}</text>`;
+  }
+  const anim = o.anim ? `<circle class="anim-ghost" r="6" fill="var(--line2)" opacity=".55" visibility="hidden"/><circle class="anim-dot" r="6" fill="var(--line2)" stroke="var(--sheet)" stroke-width="2" visibility="hidden"/>` : "";
+  const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.aria || "Graph"}" style="font:10px var(--f-mono);">
+    <defs><clipPath id="${id}"><rect x="${L}" y="${T - 6}" width="${W - L - Rp}" height="${H - T - B + 12}"/></clipPath></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="var(--sheet)"/>
+    <g stroke="var(--grid)" stroke-width="1">${grid}</g>
+    <g stroke="var(--ink-2)" stroke-width="1.3"><line x1="${L}" y1="${axY}" x2="${W - Rp}" y2="${axY}"/><line x1="${axX}" y1="${T}" x2="${axX}" y2="${H - B}"/></g>
+    <g fill="var(--ink-2)">${labels}<text x="${W - Rp}" y="${H - 3}" text-anchor="end">${o.xl || ""}</text><text x="4" y="11">${o.yl || ""}</text></g>
+    <g clip-path="url(#${id})">${body}</g>${marks}
+    <g style="font:600 10.5px var(--f-body)" stroke="var(--sheet)" stroke-width="3" paint-order="stroke">${text}</g>${anim}
+  </svg>`;
+  return { svg, sx, sy, axX };
+}
+function penSVG(L, x, w, barn) {
+  const W = 380, H = 150, sc = Math.min((W - 80) / L, (H - 50) / (L / 2)), pw = w * sc, ph = x * sc, left = (W - pw) / 2, top = barn ? 28 : 12;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Pen drawing" style="font:600 11px var(--f-body);"><rect width="${W}" height="${H}" fill="var(--sheet)"/>`;
+  if (barn) s += `<rect x="24" y="6" width="${W - 48}" height="20" fill="var(--grid)" stroke="var(--ink-2)"/><text x="${W / 2}" y="20" text-anchor="middle" fill="var(--ink-2)">barn wall (no fence needed)</text>`;
+  s += `<rect x="${left}" y="${top}" width="${pw}" height="${ph}" fill="var(--accent-soft)"/>`;
+  s += barn ? `<path d="M${left} ${top} V${top + ph} H${left + pw} V${top}" fill="none" stroke="var(--curve)" stroke-width="3" stroke-linejoin="round"/>`
+    : `<rect x="${left}" y="${top}" width="${pw}" height="${ph}" fill="none" stroke="var(--curve)" stroke-width="3"/>`;
+  if (ph > 1) s += `<text x="${left - 6}" y="${top + ph / 2 + 4}" text-anchor="end" fill="var(--ink-2)">x = ${fmt(x)}</text>`;
+  s += `<text x="${W / 2}" y="${top + ph + 15}" text-anchor="middle" fill="var(--ink-2)">${fmt(w)} ft</text>`;
+  if (ph > 18 && pw > 70) s += `<text x="${W / 2}" y="${top + ph / 2 + 4}" text-anchor="middle" fill="var(--accent)">${fmt(x * w)} sq ft</text>`;
+  return s + "</svg>";
+}
+const pillHTML = (cls, t) => `<span class="pill ${cls}">${t}</span>`;
+const SCENES = {
+  ball: {
+    sliders: [{ k: "v", label: "Launch speed", unit: " ft/s", min: 32, max: 96, step: 8, val: 48 }, { k: "k", label: "Target height", unit: " ft", min: 0, max: 150, step: 1, val: 32 }],
+    presets: [["2 times", { v: 48, k: 32 }], ["Just touches", { v: 48, k: 36 }], ["Never", { v: 48, k: 40 }]], play: "Throw",
+    render({ v, k }) {
+      const f = t => -16 * t * t + v * t, T = v / 16, tp = v / 32, top = v * v / 64, D = v * v - 64 * k;
+      const pts = [{ x: 0, y: 0, t: "root" }, { x: T, y: 0, t: "root", label: `lands ${fmt(T)} s`, pos: "above-left" }];
+      let ans, pill, band = null;
+      if (k <= 0) { ans = "Height 0 is the ground: that's the launch and the landing."; pill = pillHTML("mid", "the ground"); }
+      else if (D > 0) {
+        const s = Math.sqrt(D), t1 = (v - s) / 32, t2 = (v + s) / 32; band = { y: k, a: t1, b: t2 };
+        pts.push({ x: t1, y: k, t: "good", label: `${fmt(t1)} s ↑`, pos: "left" }, { x: t2, y: k, t: "good", label: `${fmt(t2)} s ↓`, pos: "right" });
+        ans = `Twice: ${m(`${TV} = ${fmt(t1)}`)} s going up and ${m(`${TV} = ${fmt(t2)}`)} s coming down. It's above ${k} ft for ${fmt(t2 - t1)} s.`; pill = pillHTML("good", "positive → 2 times");
+      } else if (D === 0) { ans = `Once, right at the top (${m(`${TV} = ${fmt(tp)}`)} s).`; pill = pillHTML("mid", "zero → just touches"); }
+      else { ans = `Never. The top is only ${fmt(top)} ft.`; pill = pillHTML("bad", "negative → never"); }
+      pts.push({ x: tp, y: top, t: D === 0 && k > 0 ? "good" : "vertex", label: `top ${fmt(top)} ft`, pos: "above" });
+      const g = sceneSVG({ x: [0, T * 1.06], y: [0, Math.max(top, k) * 1.2 + 4], f, dom: [0, T], line: k > 0 ? { y: k, label: `target ${k} ft` } : null, band, pts, xl: "time t (s)", yl: "height h (ft)", anim: true, aria: "Height of the ball over time" });
+      return { g, anim: { f, a: 0, b: T }, eq: `<i>h</i> = ${poly([-16, v, 0], TV)}`, facts: `
+        <dt>Reach ${k} ft?</dt><dd>${m(`${poly([-16, v, 0], TV)} = ${k}`)} → ${m(`${poly([16, -v, k], TV)} = 0`)}</dd>
+        <dt>b² − 4ac</dt><dd>${m(`${par(-v)}${SQ} − 4(16)(${k}) = ${num(D)}`)} ${pill}</dd>
+        <dt>Answer</dt><dd>${ans}</dd>
+        <dt>Top</dt><dd>vertex ${m(`${TV} = −<i>b</i> ⁄ 2<i>a</i> = ${fmt(tp)}`)} s, height ${fmt(top)} ft</dd>
+        <dt>Lands</dt><dd>${m(`${TV}(${poly([-16, v], TV)}) = 0`)} → ${m(`${TV} = 0`)} (launch) or ${m(`${TV} = ${fmt(T)}`)} s <span class="small muted">· c = 0, so factor out t</span></dd>` };
+    } },
+  biz: {
+    sliders: [{ k: "N", label: "Sold if free", unit: "", min: 200, max: 400, step: 20, val: 300 }, { k: "F", label: "Venue cost", pre: "$", min: 500, max: 4000, step: 50, val: 2000 }],
+    presets: [["2 prices", { N: 300, F: 2000 }], ["Just one", { N: 300, F: 2250 }], ["None", { N: 300, F: 2500 }]],
+    render({ N, F }) {
+      const f = p => p * (N - 10 * p), P = N / 10, pv = N / 20, top = N * N / 40, D = N * N - 40 * F;
+      const pts = [{ x: pv, y: top, t: D === 0 ? "good" : "vertex", label: `best ${usd(pv)} → ${usd(top)}`, pos: "above" }];
+      let ans, pill, band = null;
+      if (D > 0) {
+        const s = Math.sqrt(D), p1 = (N - s) / 20, p2 = (N + s) / 20; band = { y: F, a: p1, b: p2 };
+        pts.push({ x: p1, y: F, t: "good", label: usd(p1), pos: "left" }, { x: p2, y: F, t: "good", label: usd(p2), pos: "right" });
+        ans = `Profit at any price between ${usd(p1)} and ${usd(p2)}.`; pill = pillHTML("good", "positive → 2 prices");
+      } else if (D === 0) { ans = `Only ${usd(pv)} breaks even, and no price makes a profit.`; pill = pillHTML("mid", "zero → 1 price"); }
+      else { ans = `No price covers ${usd(F)}. Don't book this venue.`; pill = pillHTML("bad", "negative → none"); }
+      const g = sceneSVG({ x: [0, P], y: [0, Math.max(top, F) * 1.22], f, dom: [0, P], line: { y: F, label: `cost ${usd(F)}` }, band, pts, xl: "ticket price p ($)", yl: "revenue R ($)", aria: "Revenue against ticket price" });
+      return { g, eq: `<i>R</i> = ${PV}(${N} − 10${PV})`, facts: `
+        <dt>Tickets</dt><dd>${m(`${N} − 10${PV}`)} sold at ${m(`$${PV}`)}; nobody buys at ${usd(P)}</dd>
+        <dt>Break even</dt><dd>${m(`${PV}(${N} − 10${PV}) = ${F}`)} → ${m(`${poly([10, -N, F], PV)} = 0`)}</dd>
+        <dt>b² − 4ac</dt><dd>${m(`${N}${SQ} − 4(10)(${F}) = ${num(D)}`)} ${pill}</dd>
+        <dt>Answer</dt><dd>${ans}</dd>
+        <dt>Best price</dt><dd>vertex ${m(`${PV} = ${fr(N, 20)} = ${fmt(pv)}`)} → revenue ${usd(top)}</dd>` };
+    } },
+  rock: {
+    sliders: [{ k: "H", label: "Bridge height", unit: " ft", min: 16, max: 400, step: 4, val: 144 }],
+    presets: [["144 ft", { H: 144 }], ["64 ft", { H: 64 }], ["400 ft", { H: 400 }], ["Messy: 200 ft", { H: 200 }]], play: "Drop",
+    render({ H }) {
+      const ts = Math.sqrt(H) / 4, f = t => H - 16 * t * t, exact = Number.isInteger(ts * 4) && Number.isInteger(ts * 100);
+      const g = sceneSVG({ x: [-ts * 1.15 - .2, ts * 1.15 + .2], y: [-H * .06, H * 1.22], f, dom: [0, ts], anim: true, xl: "time t (s)", yl: "height h (ft)", aria: "Height of the dropped rock over time",
+        pts: [{ x: 0, y: H, t: "vertex", label: `let go at ${H} ft`, pos: "right" }, { x: ts, y: 0, t: "good", label: `splash ${fmt(ts)} s`, pos: "above-left" }, { x: -ts, y: 0, t: "reject", label: `✗ ${fmt(-ts)} s`, pos: "above-right" }] });
+      return { g, anim: { f, a: 0, b: ts }, eq: `<i>h</i> = ${H} − 16${TV}${SQ}`, facts: `
+        <dt>Shape</dt><dd>no ${m(TV)} term: nothing pushed it, so ${m("<i>b</i> = 0")}</dd>
+        <dt>Splash</dt><dd>${m(`${HV} = 0`)} → ${m(`16${TV}${SQ} = ${H}`)} → ${m(`${TV}${SQ} = ${fmt(H / 16)}`)} → ${m(`${TV} = ±${exact ? "" : "√" + fmt(H / 16) + " ≈ ±"}${fmt(ts)}`)}</dd>
+        <dt>Answer</dt><dd>hits the water at ${fmt(ts)} s ${pillHTML("good", "keep +")}</dd>
+        <dt>Rejected</dt><dd>${m(`${TV} = ${fmt(-ts)}`)} s is a moment <i>before</i> it was dropped ${pillHTML("bad", "✗")}</dd>` };
+    } },
+  hands: {
+    sliders: [{ k: "n", label: "People", unit: "", min: 2, max: 20, step: 1, val: 10 }],
+    presets: [["10 people", { n: 10 }], ["16 people", { n: 16 }]],
+    render({ n }) {
+      const Hs = n * (n - 1) / 2, f = x => x * (x - 1) / 2, neg = -(n - 1);
+      const g = sceneSVG({ x: [neg - 1.5, n + 1.5], y: [-Hs * .08 - 1, Hs * 1.25 + 2], f, dom: [0, 30], discrete: true, line: { y: Hs }, xl: "people n", yl: "handshakes", aria: "Handshakes against number of people",
+        pts: [{ x: n, y: Hs, t: "good", label: `${n} people → ${Hs}`, pos: "left" }, { x: neg, y: Hs, t: "reject", label: `✗ ${num(neg)}`, pos: "right" }] });
+      return { g, eq: `${fr(`${NV}(${NV} − 1)`, 2)} = ${Hs}`, facts: `
+        <dt>Why</dt><dd>${n} people × ${n - 1} hands each = ${n * (n - 1)}, but every handshake got counted twice → ${Hs}</dd>
+        <dt>Standard</dt><dd>${m(`${poly([1, -1, -2 * Hs], NV)} = 0`)}</dd>
+        <dt>Pair</dt><dd>× to ${m(num(-2 * Hs))}, + to ${m("−1")} → ${m(`${num(-n)} and ${n - 1}`)}</dd>
+        <dt>Factored</dt><dd>${m(`${brv(-n, NV)}${brv(n - 1, NV)} = 0`)}</dd>
+        <dt>Answer</dt><dd>${m(`${NV} = ${n}`)} ${pillHTML("good", "keep")} · ${m(`${NV} = ${num(neg)}`)} ${pillHTML("bad", "no negative people")}</dd>` };
+    } },
+  stop: {
+    sliders: [{ k: "dist", label: "Deer ahead", unit: " ft", min: 30, max: 300, step: 5, val: 100 }, { k: "s", label: "Your speed", unit: " mph", min: 10, max: 80, step: 1, val: 30 }],
+    presets: [["30 mph", { dist: 100, s: 30 }], ["40 mph", { dist: 100, s: 40 }], ["Double: 60", { dist: 100, s: 60 }]],
+    render({ dist, s }) {
+      const f = v => v + v * v / 20, disc = 400 + 80 * dist, vm = (-20 + Math.sqrt(disc)) / 2, vn = (-20 - Math.sqrt(disc)) / 2, ds = f(s), ok = ds <= dist;
+      const x1 = Math.max(vm, s) * 1.25 + 5;
+      const g = sceneSVG({ x: [0, x1], y: [0, Math.max(dist, ds) * 1.2 + 10], f, dom: [0, x1], line: { y: dist, label: `deer ${dist} ft` }, xl: "speed v (mph)", yl: "stopping distance (ft)", aria: "Stopping distance against speed",
+        pts: [{ x: vm, y: dist, t: "good", label: `max ${fmt(vm, 1)} mph`, pos: "above-left" }, { x: s, y: ds, t: ok ? "now" : "bad", label: `you: ${fmt(ds, 1)} ft`, pos: "below-right" }] });
+      return { g, eq: `<i>d</i> = ${VV} + ${fr(VV + SQ, 20)}`, facts: `
+        <dt>Max speed</dt><dd>${m(`${VV} + ${fr(VV + SQ, 20)} = ${dist}`)} → ×20 → ${m(`${poly([1, 20, -20 * dist], VV)} = 0`)}</dd>
+        <dt>b² − 4ac</dt><dd>${m(`20${SQ} − 4(1)(${num(-20 * dist)}) = ${disc}`)} ${isSq(disc) ? pillHTML("mid", "perfect square: it factors") : pillHTML("bad", "not a square → formula")}</dd>
+        <dt>Formula</dt><dd>${m(`${VV} = ${fr(`−20 + √<span class="rad">${disc}</span>`, 2)} ≈ ${fmt(vm, 1)}`)} mph <span class="small muted">(reject ${fmt(vn, 1)})</span></dd>
+        <dt>At ${s} mph</dt><dd>thinking ${s} ft + braking ${fmt(s * s / 20, 1)} ft = ${fmt(ds, 1)} ft ${ok ? pillHTML("good", `stops, ${fmt(dist - ds, 1)} ft to spare`) : pillHTML("bad", `needs ${fmt(ds - dist, 1)} ft more`)}</dd>
+        <dt>Double it</dt><dd>at ${2 * s} mph braking is ${fmt(4 * s * s / 20, 1)} ft: 4× the ${fmt(s * s / 20, 1)} ft at ${s} mph</dd>` };
+    } },
+  fence: {
+    sliders: [{ k: "L", label: "Fence length", unit: " ft", min: 20, max: 120, step: 4, val: 40 }, { k: "x", label: "Depth x", unit: " ft", min: 0, max: 20, step: 0.5, val: 6, maxFn: V => V.L / 2 }],
+    check: { k: "barn", label: "Barn wall as one side", val: true },
+    presets: [["Near-square", { L: 40, x: 13.5 }],["Best", { L: 40, x: 10 }]],
+    render({ L, x, barn }) {
+      const w = barn ? L - 2 * x : L / 2 - x, A = x * w, f = barn ? t => t * (L - 2 * t) : t => t * (L / 2 - t);
+      const xb = L / 4, wb = barn ? L / 2 : L / 4, Ab = xb * wb;
+      const g = sceneSVG({ x: [0, L / 2], y: [0, Ab * 1.28], f, dom: [0, L / 2], xl: "depth x (ft)", yl: "area (sq ft)", aria: "Pen area against depth",
+        pts: [{ x: 0, y: 0, t: "root" }, { x: L / 2, y: 0, t: "root" }, { x: xb, y: Ab, t: "vertex", label: `best ${fmt(Ab)} sq ft`, pos: "above" }, { x, y: A, t: "now", label: `${fmt(A)}`, pos: A > Ab * .2 ? "below" : "above" }] });
+      return { g, draw: penSVG(L, x, w, barn), eq: `<i>A</i> = ${X}(${barn ? `${L} − 2${X}` : `${L / 2} − ${X}`}) = ${poly(barn ? [-2, L, 0] : [-1, L / 2, 0])}`, facts: `
+        <dt>Fence</dt><dd>${barn ? m(`2${X} + <i>w</i> = ${L}`) + " → " + m(`<i>w</i> = ${L} − 2${X}`) : m(`2${X} + 2<i>w</i> = ${L}`) + " → " + m(`<i>w</i> = ${L / 2} − ${X}`)}</dd>
+        <dt>Best</dt><dd>vertex ${m(`${X} = −<i>b</i> ⁄ 2<i>a</i> = ${xb}`)} → ${xb} × ${wb} = ${fmt(Ab)} sq ft. ${barn ? "Twice as long as deep, not a square." : "A square!"}</dd>
+        <dt>Yours</dt><dd>${fmt(x)} × ${fmt(w)} = ${fmt(A)} sq ft ${pillHTML(A >= Ab - 1e-9 ? "good" : "mid", `${Math.round(100 * A / Ab)}% of best`)}</dd>
+        <dt>Roots</dt><dd>${m(`${X} = 0`)} and ${m(`${X} = ${L / 2}`)} make no pen at all; the best is halfway between</dd>` };
+    } } };
+function renderScene(id) {
+  const sc = SCENES[id], host = $(`[data-scene="${id}"]`), V = sc.V;
+  for (const s of sc.sliders) {
+    const inp = $(`#${id}-${s.k}`, host);
+    if (s.maxFn) { inp.max = s.maxFn(V); if (+inp.value > +inp.max) inp.value = inp.max; }
+    V[s.k] = +inp.value;
+    $(`output[for="${id}-${s.k}"]`, host).textContent = (s.pre || "") + fmt(V[s.k]) + (s.unit || "");
+  }
+  if (sc.check) V[sc.check.k] = $("[data-check]", host).checked;
+  const r = sc.render(V);
+  sc.state = { sx: r.g.sx, sy: r.g.sy, axX: r.g.axX, anim: r.anim };
+  $(".scene-graph", host).innerHTML = r.g.svg;
+  if (r.draw) $(".scene-draw", host).innerHTML = r.draw;
+  $(".scene-eq", host).innerHTML = r.eq;
+  $(".scene-facts", host).innerHTML = r.facts;
+}
+function playScene(id) {
+  const sc = SCENES[id], host = $(`[data-scene="${id}"]`), start = performance.now();
+  cancelAnimationFrame(sc.raf); clearTimeout(sc.hide);
+  const step = now => {
+    const st = sc.state; if (!st || !st.anim) return;
+    const { f, a, b } = st.anim, dur = Math.min(4000, Math.max(1200, (b - a) * 1000));
+    const u = Math.min(1, (now - start) / dur), t = a + (b - a) * u, y = f(t);
+    const dot = $(".anim-dot", host), ghost = $(".anim-ghost", host);
+    if (dot) { dot.setAttribute("cx", st.sx(t)); dot.setAttribute("cy", st.sy(y)); dot.setAttribute("visibility", "visible"); }
+    if (ghost) { ghost.setAttribute("cx", st.axX); ghost.setAttribute("cy", st.sy(y)); ghost.setAttribute("visibility", "visible"); }
+    if (u < 1) sc.raf = requestAnimationFrame(step);
+    else sc.hide = setTimeout(() => $$(".anim-dot, .anim-ghost", host).forEach(c => c.setAttribute("visibility", "hidden")), 1200);
+  };
+  sc.raf = requestAnimationFrame(step);
+}
+function buildScene(id) {
+  const sc = SCENES[id], host = $(`[data-scene="${id}"]`);
+  sc.V = {};
+  host.innerHTML = `<div class="explorer"><div class="card graph"><div class="scene-graph"></div>${id === "fence" ? '<div class="scene-draw"></div>' : ""}</div><div>
+    <div class="eq scene-eq"></div>
+    <div class="sliders">${sc.sliders.map(s => `<div class="wsl"><label for="${id}-${s.k}">${s.label}</label><input type="range" id="${id}-${s.k}" min="${s.min}" max="${s.max}" step="${s.step}" value="${s.val}"><output for="${id}-${s.k}"></output></div>`).join("")}</div>
+    ${sc.check ? `<label class="check"><input type="checkbox" data-check ${sc.check.val ? "checked" : ""}> ${sc.check.label}</label>` : ""}
+    <div class="row">${sc.presets.map(([label], i) => `<button class="btn ghost small" data-sp="${i}">${label}</button>`).join("")}${sc.play ? `<button class="btn small" data-play>▶ ${sc.play}</button>` : ""}</div>
+    <dl class="facts scene-facts"></dl></div></div>`;
+  $$("input", host).forEach(i => i.addEventListener("input", () => renderScene(id)));
+  $$("[data-sp]", host).forEach(b => b.onclick = () => {
+    const vals = sc.presets[+b.dataset.sp][1];
+    for (const s of sc.sliders) if (s.k in vals) { const inp = $(`#${id}-${s.k}`, host); if (s.maxFn) inp.max = s.maxFn(Object.assign({}, sc.V, vals)); inp.value = vals[s.k]; }
+    renderScene(id); if (sc.play) playScene(id);
+  });
+  if (sc.play) $("[data-play]", host).onclick = () => playScene(id);
+  renderScene(id);
+}
 
 /* ================= quiz setup ================= */
 const availTopics = () => TOPICS.filter(t => !t.extra || S.settings.extras);
@@ -1439,20 +2092,22 @@ function parseAnswer(str) {
   }
   return out;
 }
-function sameSet(given, expected) {
+function sameSet(given, expected, tol = .006) {
   const u = arr => { const o = []; arr.forEach(v => { if (!o.some(w => Math.abs(w - v) < 1e-6)) o.push(v); }); return o.sort((a, b) => a - b); };
   const g = u(given), e = u(expected);
-  return g.length === e.length && g.every((v, i) => Math.abs(v - e[i]) < 1e-6 || Math.abs(v - e[i]) < .006);
+  return g.length === e.length && g.every((v, i) => Math.abs(v - e[i]) < tol);
 }
+// real-world answers may carry units: "3 s", "$15", "200 sq ft"
+const stripUnits = s => s.replace(/\$/g, "").replace(/(\d)\s*(sq\.?\s*ft|square\s+feet|ft|feet|foot|seconds?|secs?|s|mph|people|persons|teams|sides|dollars?|cards|games)\b\.?/gi, "$1");
 function answerInput() {
   if (session.answered) return;
-  const q = session.q, raw = $("#ansInput").value, vals = parseAnswer(raw);
+  const q = session.q, raw = $("#ansInput").value, vals = parseAnswer(q.units ? stripUnits(raw) : raw);
   if (vals === null) { $(".input-hint").innerHTML = `<span style="color:var(--bad)">I couldn't read that.</span> ${q.inputHint}`; return; }
   let ok = false, trap = null;
   if (vals !== "none") {
-    if (q.kind === "num") ok = vals.length === 1 && sameSet(vals, [q.answer]);
-    else ok = sameSet(vals, q.answer);
-    if (!ok && q.traps) for (const t of q.traps) if (sameSet(vals, t.vals)) { trap = t.msg; break; }
+    if (q.kind === "num") ok = vals.length === 1 && sameSet(vals, [q.answer], q.tol);
+    else ok = sameSet(vals, q.answer, q.tol);
+    if (!ok && q.traps) for (const t of q.traps) if (sameSet(vals, t.vals, q.tol)) { trap = t.msg; break; }
     if (!ok && !trap && q.kind === "roots" && vals.length === 1 && q.answer.some(v => Math.abs(v - vals[0]) < 1e-6) && new Set(q.answer).size > 1) trap = "That's one of them. There are two solutions.";
   } else trap = "There are real solutions here.";
   $("#ansInput").disabled = true; $$("#ansForm button").forEach(b => b.disabled = true);
@@ -1677,6 +2332,7 @@ $("#typesetToggle").onchange = e => { S.settings.typeset = e.target.checked; sav
 /* ================= boot ================= */
 applyTheme();
 renderExplorer();
+Object.keys(SCENES).forEach(buildScene);
 applyExtras();
 applyTypeset();
 show((location.hash || "#start").slice(1));
